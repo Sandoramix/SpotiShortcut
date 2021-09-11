@@ -98,58 +98,52 @@ def press(key):
         exit()
 
 
-
-
-
-
-class App(tk.Frame):
-    global open_list
-    global addSong
-    global removeSong
-    def __init__(self,master=None):
+# class App(tk.Frame):
+#     global spotify
+#     def __init__(self,master=None):
 
         
-        #-----------------------
-        super().__init__(master)
-        self.master=master
-        master.geometry('400x300')
-        master.resizable(0, 0)
-        master.option_add('*Background','black')
-        master.option_add("*Button.Background",'black')
-        master.option_add("*Button.Foreground", "green")
+#         #-----------------------
+#         super().__init__(master)
+#         self.master=master
+#         master.geometry('400x300')
+#         master.resizable(0, 0)
+#         master.option_add('*Background','black')
+#         master.option_add("*Button.Background",'black')
+#         master.option_add("*Button.Foreground", "green")
         
-        self.pack()
-        self.create_widgets()
+#         self.pack()
+#         self.create_widgets()
         
-        master.mainloop()
+#         master.mainloop()
         
 
-    def create_widgets(self):
-        self.bottom=tk.Frame(self.master,height=150,width=400)
-        self.top=tk.Frame(self.master,height=150,width=400)
-        self.bottom_left=tk.Frame(self.bottom,height=150,width=200)
-
-        self.view_list=tk.Button(self.top,text='View list',height=10,width=44,bd=1,font=20,command=open_list)
-
-        self.add_song=tk.Button(self.bottom_left,text='Add song',height=6,width=30,bd=1,font=10,command=addSong)
-        self.rem_song=tk.Button(self.bottom_left,text='Remove song',height=5,width=30,bd=1,font=10,command=removeSong)
+#     def create_widgets(self):
+#         self.bottom=tk.Frame(self.master,height=150,width=400)
+#         self.top=tk.Frame(self.master,height=150,width=400)
+#         self.bottom_left=tk.Frame(self.bottom,height=150,width=200)
+#         self.add_song=tk.Button(self.bottom_left,text='Add song',height=6,width=30,bd=1,font=10,command=spotify.add_current_to_playlist)
+#         self.rem_song=tk.Button(self.bottom_left,text='Remove song',height=5,width=30,bd=1,font=10,command=spotify.remove_current_from_playlist)
         
-        self.quit=tk.Button(self.bottom, text="Quit", fg="red",height=12,width=30,bd=1,font=10,command=self.master.destroy)#command=self.master.destroy
+#         self.quit=tk.Button(self.bottom, text="Quit", fg="red",height=12,width=30,bd=1,font=10,command=self.master.destroy)#exit
 
 
-        self.bottom.pack(side=tk.BOTTOM,fill=tk.BOTH)
-        self.bottom_left.pack(side=tk.LEFT)
+#         self.bottom.pack(side=tk.BOTTOM,fill=tk.BOTH)
+#         self.bottom_left.pack(side=tk.LEFT)
         
-        self.view_list.pack(side=tk.LEFT)
+#         self.view_list.pack(side=tk.LEFT)
 
-        self.quit.pack(side=tk.RIGHT)
-        self.add_song.pack(side=tk.TOP)
+#         self.quit.pack(side=tk.RIGHT)
+#         self.add_song.pack(side=tk.TOP)
         
-        self.rem_song.pack(side=tk.BOTTOM)
+#         self.rem_song.pack(side=tk.BOTTOM)
         
-        self.top.pack(side=tk.TOP)
+#         self.top.pack(side=tk.TOP)
+# app=App(master=tk.Tk(className=' Spotify List Updater'))
 
-#app=App(master=tk.Tk(className=' Spotify List Updater'))
+
+
+
 def process_exists(processName):
     return processName in (p.name() for p in psutil.process_iter())
 if(not process_exists("Spotify.exe")):
