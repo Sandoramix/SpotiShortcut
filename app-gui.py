@@ -36,49 +36,96 @@ class Spoti():
             self.TOKEN=json.load(t)['refresh_token']
         #print(self.TOKEN)
         #self.add_item_to_playlist(songs=['spotify:track:0uTEaevJy8TUD8MgzuEOc5'])
+        
+        # self.body={'grant_type':'client_credentials','scopes': self.SCOPES,}
+        # self.response=req.post('https://accounts.spotify.com/api/token',data=self.body,auth=(self.ID,self.SECRET))
+        # self.TOKEN=self.response.json()['access_token']
 
-        #self.body={'grant_type':'client_credentials'}
-        #self.response=requests.post('https://accounts.spotify.com/api/token',data=self.body,auth=(self.ID,self.SECRET))
-        #self.TOKEN=self.response.json()['access_token']
+        # self.bd={
+        #     'Content-Type':'application/json',
+        #     'Authorization':'Bearer '+self.TOKEN,
+        # }
+        # self.response=req.get('https://api.spotify.com/v1/playlists/0c0dqQKnUr2O6nENHG3Lez?fields=tracks.items(track(name%2Cartists.name))',headers=self.bd)
+        # print(self.response.json())
+
+        #self.song_ids_from_playlist()
         #print(self.response.content)
         #print(self.TOKEN)
         #get cookie info for start_session(sp_dc, sp_key)
         #https://accounts.spotify.com/en/login?continue=https:%2F%2Fopen.spotify.com%2F
         #self.session=spotify_token.start_session("AQBJ2V_6dHFWJJ30ZDzXTkk6O8rqlPdDRX3KAR8pQpucSOUFmVICWjvbr8Uk8h6fORhJ-iJ3EYoAMZvoAJIiycD7NCW5Js1OLdZVAh926KmEdQ","6f6ec96d-685c-41e6-8d51-65f9fb0867ca")
         #self.TOKEN=self.session[0]
-        self.remove_current_from_playlist()
+        #print(self.session.playlist_tracks(playlist_id='0XEZPioQQwZfuiTpVAGNlp',fields='itemss'))
         #self.remove_item_from_playlist(songs=['3Dzso9Q2WwupEclqgxBZht'])
-    def current_song(self) -> json:
+        #self.song_names_from_playlist() 
+
+    def current_song(self):
         return self.session.current_playback()
+    def current_song_id(self) -> str:
+        return self.current_song()['item']['id']
+
+
+    def song_name(self,song=None) -> str:
+        if song==None:
+            song=self.current_song()['item']
+        elif isinstance(song,str):
+            song=self.session.track(song)
+
+
+        artists=''
+        for i in song['artists']:
+            artists+=i['name']+", "
+        artists=artists[:len(artists)-2]
+        
+        return song['name'] + ' - '+ artists
+    
+    def song_ids_from_playlist(self,playlist='0c0dqQKnUr2O6nENHG3Lez'):
+        raw=self.session.playlist(playlist_id=playlist,fields='tracks.items(track(id))')
+        ids=[]
+        for i in raw['tracks']['items']:
+
+            # name=i['track']['name']+' - '
+            # for j in i['track']['artists']:
+            #     name+=j['name']+', '
+            # name=name[:len(name)-2]
+            ids.append(i['track']['id'])
+        return ids
+
+
+
 
 
     def add_current_to_playlist(self,playlist='0c0dqQKnUr2O6nENHG3Lez'):
-        current_song_raw=self.current_song()['item']
-        id=[current_song_raw['id']]
-        #print(raw_format)
-        self.session.playlist_add_items(playlist,id)
+        self.add_item_to_playlist(songs=[self.current_song_id()],playlist=playlist)
 
     def remove_current_from_playlist(self,playlist='0c0dqQKnUr2O6nENHG3Lez'):
-        current_song_raw=self.current_song()['item']
-        id=[current_song_raw['id']]
-        self.session.playlist_remove_all_occurrences_of_items(playlist,id)   
+        self.remove_item_from_playlist(songs=[self.current_song_id()],playlist=playlist)
 
-        
+
+
+
     def add_item_to_playlist(self,songs,playlist='0c0dqQKnUr2O6nENHG3Lez'):
-        self.session.playlist_add_items(playlist,songs)
+        pl_songs=self.song_ids_from_playlist(playlist=playlist)
+        for i in songs:
+            if i not in pl_songs:
+                self.session.playlist_add_items(playlist,songs)
+                print(self.song_name(song=i)+' ADDED FROM PLAYLIST')
+            else:
+                print(self.song_name(song=i)+' IS ALREADY IN PLAYLIST')
+
 
     def remove_item_from_playlist(self,songs=[],playlist='0c0dqQKnUr2O6nENHG3Lez'):
-        self.session.playlist_remove_all_occurrences_of_items(playlist,songs)
+        pl_songs=self.song_ids_from_playlist(playlist=playlist)
+        for i in songs:
+            if i not in pl_songs:
+                self.session.playlist_remove_all_occurrences_of_items(playlist,songs)
+                print(self.song_name(song=self.session.track(i))+' REMOVED FROM PLAYLIST')
+            else:
+                print(self.song_name(song=self.session.track(i))+' NOT EXISTS IN PLAYLIST')
+        
 
-    def current_playing_song_name(self):
-        raw=self.session.current_playback()
-        print(raw['item'])
-        song_name=raw['item']['name'] + ' - '
-        for i in raw['item']['artists']:
-            song_name+= i['name']+", "
-        song_name=song_name[:len(song_name)-2]
-        print(song_name)
-        return song_name
+
+
 spotify=Spoti()
 
 
@@ -146,10 +193,14 @@ def press(key):
 
 def process_exists(processName):
     return processName in (p.name() for p in psutil.process_iter())
-if(not process_exists("Spotify.exe")):
-    subprocess.run(r"C:\Users\sando\AppData\Roaming\Spotify\Spotify.exe")   
+
+ 
 with keyboard.Listener(on_press=press) as listener:
     listener.join()
+
+if(not process_exists("Spotify.exe")):
+    subprocess.run(r"C:\Users\sando\AppData\Roaming\Spotify\Spotify.exe")  
+
 si=subprocess.STARTUPINFO()
 si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
