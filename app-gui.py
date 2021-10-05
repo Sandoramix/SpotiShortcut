@@ -20,32 +20,30 @@ import tkinter as tk
 from tkinter import font
 
 class Spoti():
-    global press
+    
     def __init__(self) -> None:
+        self.line = "-"*50+"\n"
+
         self.API = os.environ['API']
         self.ID=os.environ['CLIENT_ID']
         self.SECRET = os.environ['CLIENT_SECRET']
         self.RED_URL = os.environ['RED_URL']
         self.SCOPES = os.environ['SCOPES']
         self.RTOKEN=os.environ['REFRESH_TOKEN']
-        self.line="-"*50+"\n"
+        
         print(f'{self.line}SPOTIFY LIST UPDATER {datetime.datetime.now()}\n{self.line}', end='')
 
-        self.session = spoti.Spotify(auth_manager=SpotifyOAuth(
-                client_id=self.ID, client_secret=self.SECRET, redirect_uri=self.RED_URL, scope=self.SCOPES))
-        with open('.cache') as t:
-            self.TOKEN = json.load(t)['access_token']
+        self.oauth = SpotifyOAuth(client_id=self.ID, client_secret=self.SECRET, redirect_uri=self.RED_URL, scope=self.SCOPES)
+        self.session = spoti.Spotify(auth_manager=self.oauth)
+        self.TOKEN = self.oauth.get_access_token(as_dict=False)
 
-        threading.Thread(threading.Timer(
-            3600, self.tkn_update).start()).start()
+        threading.Thread(threading.Timer(10, self.tkn_update).start()).start()
     
 
     def tkn_update(self):
         print(f'{self.line}TOKEN UPDATED {datetime.datetime.now()}\n{self.line}',end='')
-        self.session.auth_manager.refresh_access_token(self.session.auth_manager, self.RTOKEN)
-        time.sleep(1)
-        with open('.cache') as t:
-            self.TOKEN = json.load(t)['access_token']
+        self.oauth.refresh_access_token(self.RTOKEN)
+        self.TOKEN = self.oauth.get_access_token(as_dict=False)
 
         
         
