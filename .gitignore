@@ -1,7 +1,7 @@
 .cache
 .env
 tests/
-
+outdated/
 tests/simple.py
 
 Pipfile
