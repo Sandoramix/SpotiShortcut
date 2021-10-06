@@ -7,3 +7,4 @@ tests/simple.py
 Pipfile
 Pipfile.lock
 workspace.code-workspace
+Spotify/pycache
