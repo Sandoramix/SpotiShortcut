@@ -1,3 +1,7 @@
 .cache
 .env
-tmp.py
+tests/
+
+tests/simple.py
+Spotify/
+Spotify/.cache
