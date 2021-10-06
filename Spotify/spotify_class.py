@@ -21,8 +21,7 @@ class Spoti():
         self.SCOPES = os.environ['SCOPES']
         self.RTOKEN = os.environ['REFRESH_TOKEN']
 
-        print(
-            f'{self.line}SPOTIFY LIST UPDATER {datetime.datetime.now()}\n{self.line}', end='')
+        print(f'{self.line}SPOTIFY LIST UPDATER {datetime.datetime.now()}\n{self.line}', end='')
 
         self.oauth = SpotifyOAuth(
             client_id=self.ID, client_secret=self.SECRET, redirect_uri=self.RED_URL, scope=self.SCOPES)
@@ -38,8 +37,10 @@ class Spoti():
         self.TOKEN = self.oauth.get_access_token(as_dict=False)
 
     def items_in_saved_check(self, songs=[]):
-        return list(requests.get('https://api.spotify.com/v1/me/tracks/contains?ids='+','.join(songs), headers={'Authorization': f'Bearer {self.TOKEN}'}).json())
-
+        try:
+            return list(requests.get('https://api.spotify.com/v1/me/tracks/contains?ids='+','.join(songs), headers={'Authorization': f'Bearer {self.TOKEN}'}).json())
+        except:
+            return [False for i in songs]
     def current_song(self):
         return self.session.current_playback()
 
