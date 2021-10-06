@@ -5,3 +5,6 @@ tests/
 tests/simple.py
 
 Spotify/.cache
+Pipfile
+Pipfile.lock
+workspace.code-workspace
