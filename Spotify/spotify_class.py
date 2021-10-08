@@ -8,6 +8,7 @@ import spotipy as spoti
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 
+import multiprocessing as multi
 
 class Spoti():
 
@@ -21,20 +22,17 @@ class Spoti():
         self.SCOPES = os.environ['SCOPES']
         self.RTOKEN = os.environ['REFRESH_TOKEN']
 
-        print(f'{self.line}SPOTIFY LIST UPDATER {datetime.datetime.now()}\n{self.line}', end='')
+        
 
-        self.oauth = SpotifyOAuth(
-            client_id=self.ID, client_secret=self.SECRET, redirect_uri=self.RED_URL, scope=self.SCOPES)
-        self.session = spoti.Spotify(auth_manager=self.oauth)
-        self.TOKEN = self.oauth.get_access_token(as_dict=False)
-        threading.Thread(threading.Timer(
-            3600, self.tkn_update).start()).start()
+        self.oauth = SpotifyOAuth(client_id=self.ID, client_secret=self.SECRET, redirect_uri=self.RED_URL, scope=self.SCOPES)
+        self.session = Spotify(auth_manager=self.oauth)
 
-    def tkn_update(self):
-        print(
-            f'{self.line}TOKEN UPDATED {datetime.datetime.now()}\n{self.line}', end='')
-        self.oauth.refresh_access_token(self.RTOKEN)
         self.TOKEN = self.oauth.get_access_token(as_dict=False)
+        
+        self.tkn_update(True)
+    
+    
+
 
     def items_in_saved_check(self, songs=[]):
         try:
@@ -123,3 +121,27 @@ class Spoti():
     def remove_current_from_playlist(self, playlist='0c0dqQKnUr2O6nENHG3Lez'):
         self.remove_items_from_playlist(
             songs=[self.current_song_id()], playlist=playlist)
+
+
+
+
+    
+    def tkn_update(self,flag=False):
+        self.th=threading.Timer(3600, self.tkn_update).start()
+        #self.th.setName("TIMER")
+        #self.th.start()
+
+        if flag:
+            print(f'{self.line}SPOTIFY LIST UPDATER {datetime.datetime.now()}\n{self.line}', end='')
+            return
+
+        print(f'{self.line}TOKEN UPDATED {datetime.datetime.now()}\n{self.line}', end='')
+        self.oauth.refresh_access_token(self.RTOKEN)
+        self.TOKEN = self.oauth.get_access_token(as_dict=False)
+
+    def exit(self):
+        try:
+            self.th.cancel()
+        except:
+            pass
+        SystemExit()

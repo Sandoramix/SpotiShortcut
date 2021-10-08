@@ -4,7 +4,7 @@ from pynput import keyboard
 import Spotify as s
 
 
-spotify=s.Spoti()
+
 
 
 
@@ -22,8 +22,9 @@ def press(key):
     elif k=='f8':
         spotify.add_current_to_playlist(playlist='0XEZPioQQwZfuiTpVAGNlp')
     elif k =='f9':
-        exit()
-
+        print("ADDIO")
+        spotify.exit()
+        SystemExit()
 
 
 
@@ -31,8 +32,12 @@ def press(key):
 def listener():
     with keyboard.Listener(on_press=press) as listener:
         listener.join()
-threading.Thread(target=listener).start()
-try:
-    os.popen("C:\\Users\\sando\\AppData\\Roaming\\Spotify\\Spotify.exe")
-except:
-    pass
+th1=threading.Thread(target=listener,name="LISTENER").start()
+spotify=s.Spoti()
+
+#print(threading.enumerate())
+# try:
+#     pass
+#     #os.popen("C:\\Users\\sando\\AppData\\Roaming\\Spotify\\Spotify.exe")
+# except:
+#     pass
