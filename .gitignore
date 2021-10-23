@@ -7,4 +7,7 @@ tests/simple.py
 Pipfile
 Pipfile.lock
 workspace.code-workspace
-Spotify/pycache
+Spotify_custom/pycache
+Spotify_custom/spotify.db
+Tkinter/*
+Tkinter
