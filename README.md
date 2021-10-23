@@ -11,6 +11,7 @@
 - pynput
 
 # Installation:
+* Setup your .env file
 * Run init.bat
 
 # Usage
