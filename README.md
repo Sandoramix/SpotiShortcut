@@ -1,5 +1,6 @@
 # SpotiType-helper
-Testing spotify api with python3
+- Add/Delete the song you're listening to with a simple shorcut
+(Testing spotify api with python3)
 
 - It uses spotipy & sqlite3 for local storage
 - Tkinter not yet used
