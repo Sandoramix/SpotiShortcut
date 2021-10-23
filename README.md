@@ -1,4 +1,5 @@
 # SpotiType-helper
+- Needs Python3
 - Add/Delete the song you're listening to with a simple shorcut
 
 
