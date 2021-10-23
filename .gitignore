@@ -1,15 +1,12 @@
 .cache
 .env
-tests/
-outdated/
-tests/simple.py
 
 Pipfile
 Pipfile.lock
 workspace.code-workspace
+
 Spotify_custom/__pycache__
 Spotify_custom/spotify.db
-Tkinter/*
-Tkinter
-outdated
-outdated/*
+
+
+
