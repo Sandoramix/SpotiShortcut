@@ -66,7 +66,7 @@ class Spotify_custom():
 
                 song=self.jsonExtractSongInfo(self.session.track(i))
 
-                self.dbAddSongs(song)
+                self.dbAddSongToPlaylist(playlist,song)
                 print(f"[TRUE] ADD\nPlaylist => {song[1]} ─ {song[2]}\n{self.line}")
             else:
                 song=self.dbGetSong(i)
@@ -77,8 +77,10 @@ class Spotify_custom():
         for i in songs:
             if i in pl_songs:
                 self.session.playlist_remove_all_occurrences_of_items(playlist, songs)
+
                 song=self.jsonExtractSongInfo(self.session.track(i))
 
+                self.dbDeleteSongFromPlaylist(playlist,song[0])
                 print(f"[TRUE] DELETE\nPlaylist => {song[1]} ─ {song[2]}\n{self.line}")
             else:
                 song=self.dbGetSong(i)
@@ -130,11 +132,11 @@ class Spotify_custom():
         return self.jsonExtractSongInfo(self.session.current_playback()["item"])
 
     def current_song_id(self) -> str:
-        try:
-            return self.current_song()[0]
-        except:
+        raw=self.current_song()
+        if raw==None:
             print('NO SONG IS PLAYING')
             return None
+        return raw[0]
 
     def song_name(self, song=None) -> str:
         if song == None:
@@ -196,14 +198,27 @@ class Spotify_custom():
         return [i[1] for i in self.dbExecute("select * from playlist_songs where playlist='"+id_playlist+"'",fetch=0)]
 #-------------------------------------AddData-------------------------------------------------
     def dbAddSongs(self,song):
-        if len(song)==0:
+        if not song:
             return
-        if not self.dbHasSong(song[0][0]):
-            self.dbExecute("insert into song (song_id,name,artists,duration_ms,popularity) values(?,?,?,?,?)",song)
-            
+        if type(song) is tuple:
+            song=[song]
+        for s in song:
+            if not self.dbHasSong(s[0]):
+                self.dbExecute("insert into song (song_id,name,artists,duration_ms,popularity) values(?,?,?,?,?)",[s])
+
     def dbAddPlaylist(self,id,name,owner):
         if not self.dbHasPlaylist(id):
-            self.dbExecute("insert into playlist(playlist_id,name,owner) values(?, ?, ?)",params=[(id,name,owner)])
+            self.dbExecute("insert into playlist(playlist_id,name,owner) values(?, ?, ?)",[(id,name,owner)])
+    
+    def dbAddSongToPlaylist(self,playlist,song):
+        self.dbAddSongs(song)
+        if not self.dbPlaylistHasSong(playlist,song[0]):
+            
+            self.dbExecute("insert into playlist_songs (playlist,song) values(?,?)",[(playlist,song[0])])
+
+
+    def dbDeleteSongFromPlaylist(self,playlist,song):
+        self.dbExecute("delete from playlist_songs where playlist='"+playlist+"' and song='"+song+"'")
 #-------------------------------------UpdateData----------------------------------------------
     def dbUpdateFromPlaylists(self,pl_id):
         final_obj=self.session.playlist(pl_id)
@@ -262,6 +277,7 @@ class Spotify_custom():
                 self.dbExecute("delete from playlist_songs where playlist='"+playlist_id+"' and song='"+x_song+"'")
 
 
+
     def dbClearPlaylist(self,pl_id):
         self.dbExecute("delete from playlist_songs where playlist='"+pl_id+"'")
 
@@ -273,6 +289,11 @@ class Spotify_custom():
                 self.dbClearPlaylist(pl)
                 self.dbExecute("delete from playlist where playlist_id='"+pl+"'")
 #-------------------------------------Utils--------------------------------------------------
+    def dbPlaylistHasSong(self,playlist_id,song_id):
+        if not self.dbHasX(table="playlist_songs",name1="playlist",id1=playlist_id,name2="song",id2=song_id):
+            return False
+        return True
+
     def dbHasPlaylist(self,id):
         if not self.dbHasX(table="playlist",name1="playlist_id",id1=id):
             return False
