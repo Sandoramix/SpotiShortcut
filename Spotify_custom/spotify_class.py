@@ -58,7 +58,7 @@ class Spotify_custom():
                 print(f"[FALSE] ADD\nLiked => {self.song_name(songs[i])}\n{self.line}")
 
 #---------------------------------------------------------------------------------------------
-    def add_items_to_playlist(self, songs, playlist='0c0dqQKnUr2O6nENHG3Lez'):
+    def add_items_to_playlist(self, songs, playlist):
         pl_songs = self.dbGetSongsIdsFromPlaylist(playlist)
         
         for i in songs:
@@ -98,13 +98,13 @@ class Spotify_custom():
         self.add_items_to_liked(songs=[current])
 
 #---------------------------------------------------------------------------------------------
-    def add_current_to_playlist(self, playlist='0c0dqQKnUr2O6nENHG3Lez'):
+    def add_current_to_playlist(self, playlist):
         current=self.current_song_id()
         if current==None:
             return
         self.add_items_to_playlist(songs=[current], playlist=playlist)
 
-    def remove_current_from_playlist(self, playlist='0c0dqQKnUr2O6nENHG3Lez'):
+    def remove_current_from_playlist(self, playlist):
         current=self.current_song_id()
         if current==None:
             return
@@ -116,7 +116,7 @@ class Spotify_custom():
         except:
             return [False for i in songs]
 
-    def song_ids_from_playlist(self, playlist='0c0dqQKnUr2O6nENHG3Lez'):
+    def song_ids_from_playlist(self, playlist):
         raw = self.session.playlist(playlist_id=playlist, fields='tracks.items(track(id))')
         ids = []
         for i in raw['tracks']['items']:
@@ -193,7 +193,7 @@ class Spotify_custom():
         if not self.dbHasPlaylist(id):
             self.dbExecute("insert into playlist(playlist_id,name,owner) values(?, ?, ?)",params=[(id,name,owner)])
 #-------------------------------------UpdateData----------------------------------------------
-    def dbUpdateFromPlaylists(self,pl_id="0c0dqQKnUr2O6nENHG3Lez"):
+    def dbUpdateFromPlaylists(self,pl_id):
         final_obj=self.session.playlist(pl_id)
 
         pl_name=final_obj["name"]
