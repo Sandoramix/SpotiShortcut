@@ -12,6 +12,8 @@
 - pynput
 
 # Installation:
+* Go to [Spotify Developers Dashboard](https://developer.spotify.com/dashboard/) and create an application
+* In app Settings set "Redirect url" to http://127.0.0.1:9005
 * Set your .env file
 * Run init.bat
 

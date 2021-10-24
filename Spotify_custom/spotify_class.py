@@ -23,10 +23,11 @@ class Spotify_custom():
         self.SECRET = os.environ['CLIENT_SECRET']
         self.RED_URL = os.environ['RED_URL']
         self.SCOPES = os.environ['SCOPES']
-        self.RTOKEN = os.environ['REFRESH_TOKEN']
         #------------------------------------------------
         self.oauth = SpotifyOAuth(client_id=self.ID, client_secret=self.SECRET, redirect_uri=self.RED_URL, scope=self.SCOPES)
         self.session = Spotify(auth_manager=self.oauth)
+        with open(".cache","r") as f:
+            self.RTOKEN=json.loads(f.read())["refresh_token"]
         #------------------------------------------------
         self.username=self.session.current_user()["id"]
 
