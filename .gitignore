@@ -1,6 +1,8 @@
 .cache
 .env
 .github
+.vscode
+.gitignore
 
 Pipfile
 Pipfile.lock
