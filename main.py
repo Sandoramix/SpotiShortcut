@@ -58,9 +58,11 @@ def close():
     sleep(2)
     exit()  
 
+    
+spotify=s.Spotify_custom()
 def listener():
     with keyboard.Listener(on_press=press) as listener:
         listener.join()
 th1=threading.Thread(target=listener,name="LISTENER").start()
 
-spotify=s.Spotify_custom()
+
