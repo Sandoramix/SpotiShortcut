@@ -1,6 +1,5 @@
 .cache
 .env
-.gitignore
 
 Pipfile
 Pipfile.lock
