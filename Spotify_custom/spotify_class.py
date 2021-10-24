@@ -322,7 +322,7 @@ class Spotify_custom():
             self.dbExecute("CREATE TABLE song (song_id STRING PRIMARY KEY UNIQUE, name STRING, artists STRING, duration_ms INTEGER, popularity INTEGER)")
             self.dbExecute("CREATE TABLE playlist_songs (playlist STRING REFERENCES playlist (playlist_id), song STRING REFERENCES song (song_id))")
             return
-        self.database=sqlite3.connect("Spotify_custom/spotify.db")
+        self.database=sqlite3.connect("Spotify_custom/spotify.db",check_same_thread=False)
         self.db=self.database.cursor()
 
     def dbUpdateDB(self):

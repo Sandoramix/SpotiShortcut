@@ -42,6 +42,8 @@ def press(key):
     if pause and (k in list(shorcuts.keys()) or k==shorcuts["pause"]):
         print(f"PAUSED [F5 for resume]\n{spotify.line2}")
         return
+    if pause:
+        return
     if k not in shorcuts:
         return
     
