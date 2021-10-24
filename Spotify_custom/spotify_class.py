@@ -25,12 +25,10 @@ class Spotify_custom():
         self.SCOPES = os.environ['SCOPES']
         #------------------------------------------------
         self.oauth = SpotifyOAuth(client_id=self.ID, client_secret=self.SECRET, redirect_uri=self.RED_URL, scope=self.SCOPES)
-        self.session = Spotify(auth_manager=self.oauth)
-        with open(".cache","r") as f:
-            self.RTOKEN=json.loads(f.read())["refresh_token"]
+        self.session = Spotify(oauth_manager=self.oauth)
+        self.RTOKEN = self.oauth.get_access_token()["refresh_token"]
         #------------------------------------------------
         self.username=self.session.current_user()["id"]
-
         self.TOKEN = self.oauth.get_access_token(as_dict=False)
         self.tkn_update(True)
         
@@ -151,16 +149,29 @@ class Spotify_custom():
     def tkn_update(self,flag=False):
         self.th[0]=threading.Timer(3600, self.tkn_update)
         self.th[0].start()
-        #self.th.setName("TIMER")
-        #self.th.start()
 
         if flag:
             print(f'{self.line2}\nSPOTIFY UPDATER │ {str(datetime.datetime.now()).replace(" "," │ ")}\n{self.line2}')
             return
 
         print(f'TOKEN UPDATED │ {str(datetime.datetime.now()).replace(" "," │ ")}\n{self.line2}')
+
         self.oauth.refresh_access_token(self.RTOKEN)
         self.TOKEN = self.oauth.get_access_token(as_dict=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #─────────────────────────────────────────────────────────────────────────────────────────────
     def jsonExtractSongInfo(self,song) -> Tuple:
         s_id=song["id"]
