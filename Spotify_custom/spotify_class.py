@@ -58,7 +58,7 @@ class Spotify_custom():
                 print(f"[FALSE] ADD\nLiked => {self.song_name(songs[i])}\n{self.line}")
 
 #---------------------------------------------------------------------------------------------
-    def add_items_to_playlist(self, songs, playlist):
+    def add_items_to_playlist(self,playlist, songs=[]):
         pl_songs = self.dbGetSongsIdsFromPlaylist(playlist)
         
         for i in songs:
@@ -73,7 +73,7 @@ class Spotify_custom():
                 song=self.dbGetSong(i)
                 print(f"[FALSE] ADD\nPlaylist => {song[1]} ─ {song[2]}\n{self.line}")
 
-    def remove_items_from_playlist(self, songs=[], playlist):
+    def remove_items_from_playlist(self,playlist, songs=[]):
         pl_songs = self.dbGetSongsIdsFromPlaylist(playlist)
         for i in songs:
             if i in pl_songs:
