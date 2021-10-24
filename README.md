@@ -1,4 +1,5 @@
-# SpotiType-helper
+# SpotiShortcut
+- Needs Python3
 - Add/Delete the song you're listening to with a simple shorcut
 
 
@@ -11,6 +12,7 @@
 - pynput
 
 # Installation:
+* Set your .env file
 * Run init.bat
 
 # Usage
