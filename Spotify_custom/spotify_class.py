@@ -73,7 +73,7 @@ class Spotify_custom():
                 song=self.dbGetSong(i)
                 print(f"[FALSE] ADD\nPlaylist => {song[1]} ─ {song[2]}\n{self.line}")
 
-    def remove_items_from_playlist(self, songs=[], playlist='0c0dqQKnUr2O6nENHG3Lez'):
+    def remove_items_from_playlist(self, songs=[], playlist):
         pl_songs = self.dbGetSongsIdsFromPlaylist(playlist)
         for i in songs:
             if i in pl_songs:
