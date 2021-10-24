@@ -8,5 +8,6 @@ workspace.code-workspace
 Spotify_custom/__pycache__
 Spotify_custom/spotify.db
 
+start.bat
 
 
