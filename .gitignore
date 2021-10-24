@@ -1,8 +1,7 @@
 .cache
 .env
 .github
-.gitignore
-.github/*
+
 Pipfile
 Pipfile.lock
 workspace.code-workspace
