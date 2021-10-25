@@ -13,7 +13,7 @@ pause=False
 def press(key):
     global pause
     # FULLY CUSTOMIZABLE SHORCUTS
-    # "Key" : [action,parameter]
+    # "Key" : [action,parameter( for example playlist id)]
     # "Key" : [action,None] -> without any parameters
     shorcuts={
         "f9":[close,None],
@@ -35,18 +35,21 @@ def press(key):
         k = key.char 
     except:
         k = key.name
-    if k==shorcuts["pause"]: 
+    if k==shorcuts['pause']: 
         pause=not pause
         if not pause:
             print(f"RESUMED\n{spotify.line2}")
-    if pause and (k in list(shorcuts.keys()) or k==shorcuts["pause"]):
+            
+    if pause and (k in list(shorcuts.keys()) or k==shorcuts['pause'] ):
         print(f"PAUSED [F5 for resume]\n{spotify.line2}")
         return
+
     if pause:
         return
+
     if k not in shorcuts:
         return
-    
+
     if shorcuts[k][1]:
         shorcuts[k][0](shorcuts[k][1])
     else:
