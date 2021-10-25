@@ -4,8 +4,8 @@
 
 
 - It uses spotipy & sqlite3 for local storage
-- Tkinter not yet used
-- (Actually this project exist because i wanted to test spotipy api with python3)
+
+
 # Dependencies:
 - spotipy
 - requests
