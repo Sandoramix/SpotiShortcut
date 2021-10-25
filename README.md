@@ -5,7 +5,6 @@
 
 - It uses spotipy & sqlite3 for local storage
 
-
 # Dependencies:
 - spotipy
 - requests
