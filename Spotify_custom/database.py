@@ -71,7 +71,7 @@ class SpotifyDB():
             song=[song]
         for s in song:
             if not self.has_song(s[0]):
-                self.exec("insert into song (song_id,name,artists,duration_ms,popularity) values(?,?,?,?,?)",[s])
+                self.exec("insert into song (song_id,name,artists,duration_ms) values(?,?,?,?)",[s])
 
     def add_playlist(self,id,name,owner):
         if not self.playlist_exists(id):
@@ -158,9 +158,8 @@ class SpotifyDB():
         s_id=object["id"]
         s_name=object["name"]
         s_duration=object["duration_ms"]
-        s_pop=object["popularity"]
         s_artists=", ".join([i["name"] for i in object["artists"]])
-        return (s_id,s_name,s_artists,s_duration,s_pop)
+        return (s_id,s_name,s_artists,s_duration)
 
     def playlist_has_song(self,playlist_id,song_id):
         if not self.database_has(table="playlist_songs",param1="playlist",value1=playlist_id,param2="song",value2=song_id):
