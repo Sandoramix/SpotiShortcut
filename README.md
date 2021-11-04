@@ -17,7 +17,7 @@
 - pynput
 
 ------------
-# Current avaiable actions
+# Current available actions
 * <b>add_current_to_playlist   </b>    : *Add currently listening song to a specific playlist*
 * <b>remove_current_from_playlist </b> : *Try to remove currently listening song from a specific playlist*
 * <b>add_current_to_liked         </b> : *Add currently listening song to liked*
