@@ -68,6 +68,7 @@ class SpotifyDB():
 
 # -------------------------------------AddData-------------------------------------------------
 
+
     def add_song(self, song) -> None:
         if type(song) is tuple:
             song = [song]
