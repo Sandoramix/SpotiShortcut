@@ -14,7 +14,7 @@ def press(key):
     # "Key" : [action,parameter( for example playlist id)]
     # "Key" : [action,None] -> without any parameters
 
-    # Spotify actions avaiable:[
+    # Spotify available actions:[
     #   add_current_to_playlist , remove_current_from_playlist
     #   add_current_to_liked , remove_current_from_liked
     #   loop_toggle , shuffle_toggle
