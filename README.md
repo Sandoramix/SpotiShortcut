@@ -17,7 +17,7 @@
 * Run init.bat
 
 # Current avaiable actions
-* add_current_to_playlist       = Add currently listening song to a specific playlist
+* <b>add_current_to_playlist </b>      = Add currently listening song to a specific playlist
 * remove_current_from_playlist  = Try to remove currently listening song from a specific playlist
 * add_current_to_liked          = Add currently listening song to liked
 * remove_current_from_liked     = Try to remove currently listening song from liked
