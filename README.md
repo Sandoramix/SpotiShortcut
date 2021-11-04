@@ -17,9 +17,9 @@
 * Run init.bat
 
 # Current avaiable actions
-* <b>add_current_to_playlist </b>      = Add currently listening song to a specific playlist
-* remove_current_from_playlist  = Try to remove currently listening song from a specific playlist
-* add_current_to_liked          = Add currently listening song to liked
-* remove_current_from_liked     = Try to remove currently listening song from liked
-* loop_toggle                   = Change loop state (as in Spotify application)
-* shuffle_toggle                = Change shuffle state (as in Spotify application)
+* <b>add_current_to_playlist   </b>    = Add currently listening song to a specific playlist
+* <b>remove_current_from_playlist </b> = Try to remove currently listening song from a specific playlist
+* <b>add_current_to_liked         </b> = Add currently listening song to liked
+* <b>remove_current_from_liked    </b> = Try to remove currently listening song from liked
+* <b>loop_toggle                  </b> = Change loop state (as in Spotify application)
+* <b>shuffle_toggle               </b> = Change shuffle state (as in Spotify application)
