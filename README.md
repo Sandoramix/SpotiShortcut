@@ -16,5 +16,10 @@
 * Edit .env_example
 * Run init.bat
 
-# Usage
-* With your shorcuts, you can add or delete songs from liked/playlist (need to set the playlist id in that case)
+# Current avaiable actions
+* add_current_to_playlist       = Add currently listening song to a specific playlist
+* remove_current_from_playlist  = Try to remove currently listening song from a specific playlist
+* add_current_to_liked          = Add currently listening song to liked
+* remove_current_from_liked     = Try to remove currently listening song from liked
+* loop_toggle                   = Change loop state (as in Spotify application)
+* shuffle_toggle                = Change shuffle state (as in Spotify application)
