@@ -1,5 +1,5 @@
 # SpotiShortcut
-**It is my personal project, where i wanted to use [spotify api & pynput & sqlite3] for a simple actions automization **
+**It is my personal project, where i wanted to use [spotify api & pynput & sqlite3] for a simple actions automization**
 
 ---
 
