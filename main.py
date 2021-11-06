@@ -1,13 +1,14 @@
 import os
 import threading
 from time import sleep
-from pynput import keyboard
 import Spotify_custom as s
 
+from dotenv import load_dotenv
+load_dotenv()
 
 pause = False
 
-
+from pynput import keyboard
 def press(key):
     global pause
     # FULLY CUSTOMIZABLE SHORCUTS
