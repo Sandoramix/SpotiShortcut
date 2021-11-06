@@ -13,7 +13,7 @@
 * Run init.bat
 ## Dependencies:
 - spotipy
-- requests
+- ~~pipenv~~ -> dotenv
 - pynput
 
 ------------
@@ -24,3 +24,6 @@
 * <b>remove_current_from_liked    </b> : *Try to remove currently listening song from liked*
 * <b>loop_toggle                  </b> : *Change loop state (as in Spotify application)*
 * <b>shuffle_toggle               </b> : *Change shuffle state (as in Spotify application)*
+
+
+[editor]:(https://pandao.github.io/editor.md/en.html)
