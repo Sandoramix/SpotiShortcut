@@ -3,13 +3,10 @@ import os
 import datetime
 import threading
 
-from typing import Dict, Tuple
 import requests
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 
- 
- 
  
 
 from Spotify_custom.database import SpotifyDB
@@ -43,7 +40,7 @@ class Spotify_custom():
     def line(self, ch="-", length=50) -> str:
         return ch*length
 
-    def current_playback(self) -> Dict or None:
+    def current_playback(self) -> dict or None:
         raw = self.session.current_playback()
         if not raw:
             msg = "EXECUTION ERROR, TRY AGAIN"
