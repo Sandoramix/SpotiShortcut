@@ -3,14 +3,14 @@ import os
 import datetime
 import threading
 
-import json
 from typing import Dict, Tuple
 import requests
-import spotipy as spoti
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
-import sqlite3
 
+ 
+ 
+ 
 
 from Spotify_custom.database import SpotifyDB
 
