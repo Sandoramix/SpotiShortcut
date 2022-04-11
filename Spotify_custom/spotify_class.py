@@ -7,7 +7,6 @@ import requests
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 
- 
 
 from Spotify_custom.database import SpotifyDB
 
@@ -16,7 +15,6 @@ class Spotify_custom():
 
     def __init__(self) -> None:
 
-        self.line2 = "─"*50
         self.th = [None]
         # ------------------------------------------------
         self.API = os.environ['API']
@@ -30,14 +28,12 @@ class Spotify_custom():
         self.session = Spotify(oauth_manager=self.oauth)
         self.RTOKEN = self.oauth.get_access_token()["refresh_token"]
         # ------------------------------------------------
-
         self.TOKEN = self.oauth.get_access_token(as_dict=False)
         self.tkn_update(True)
 
         self.db = SpotifyDB(self.session)
 
-# ─────────────────────────────────────────────────────────────────────────────────────────────
-    def line(self, ch="-", length=50) -> str:
+    def line(self, ch="─", length=50) -> str:
         return ch*length
 
     def current_playback(self) -> dict or None:
@@ -79,31 +75,20 @@ class Spotify_custom():
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 
-    def remove_items_from_liked(self, songs=[]) -> None:
+    def likedSongToggle(self, songs=[], removing=False) -> None:
         check = self.items_in_saved_check(songs)
         for i in range(len(songs)):
-            if check[i] == True:
-                self.session.current_user_saved_tracks_delete([songs[i]])
-
+            if check[i] == removing:
+                if removing:
+                    self.session.current_user_saved_tracks_delete([songs[i]])
+                else:
+                    self.session.current_user_saved_tracks_add([songs[i]])
                 print(
-                    f"[TRUE] DELETE\nLiked => {self.song_name(songs[i])}\n{self.line()}")
+                    f"[TRUE] SONG {'ADDED TO' if not removing else 'REMOVED FROM'} LIKED:\n=> {self.song_name(songs[i])}\n{self.line()}")
             else:
                 print(
-                    f"[FALSE] DELETE\nLiked => {self.song_name(songs[i])}\n{self.line()}")
+                    f"[FALSE] SONG {'ADDED TO' if not removing else 'REMOVED FROM'} LIKED:\n=> {self.song_name(songs[i])}\n{self.line()}")
 
-    def add_items_to_liked(self, songs=[]) -> None:
-        check = self.items_in_saved_check(songs)
-
-        for i in range(len(songs)):
-            if check[i] == False:
-                self.session.current_user_saved_tracks_add([songs[i]])
-                print(
-                    f"[TRUE] ADD\nLiked => {self.song_name(songs[i])}\n{self.line()}")
-            else:
-                print(
-                    f"[FALSE] ADD\nLiked => {self.song_name(songs[i])}\n{self.line()}")
-
-# ---------------------------------------------------------------------------------------------
     def add_items_to_playlist(self, playlist, songs=[]) -> None:
         for i in songs:
             if not self.db.playlist_has_song(playlist, i):
@@ -113,11 +98,13 @@ class Spotify_custom():
 
                 self.db.playlist_add_song(playlist, song)
                 print(
-                    f"[TRUE] ADD\nPlaylist => {song[1]} ─ {song[2]}\n{self.line()}")
+                    f"[TRUE] SONG ADDED TO PLAYLIST:\n=> {song[1]} ─ {song[2]}\n{self.line()}")
             else:
                 song = self.db.song(i)
                 print(
-                    f"[FALSE] ADD\nPlaylist => {song[1]} ─ {song[2]}\n{self.line()}")
+                    f"[FALSE] SONG ADDED TO PLAYLIST:\n=> {song[1]} ─ {song[2]}\n{self.line()}")
+
+# ---------------------------------------------------------------------------------------------
 
     def remove_items_from_playlist(self, playlist, songs=[]) -> None:
         for i in songs:
@@ -130,27 +117,29 @@ class Spotify_custom():
                 self.db.playlist_delete_song(playlist, song[0])
 
                 print(
-                    f"[TRUE] DELETE\nPlaylist => {song[1]} ─ {song[2]}\n{self.line()}")
+                    f"[TRUE] SONG DELETED FROM PLAYLIST:\n=> {song[1]} ─ {song[2]}\n{self.line()}")
             else:
                 song = self.db.json_extract_song_info(self.session.track(i))
 
                 print(
-                    f"[FALSE] DELETE\nPlaylist => {song[1]} ─ {song[2]}\n{self.line()}")
+                    f"[FALSE] SONG DELETED FROM PLAYLIST:\n=> {song[1]} ─ {song[2]}\n{self.line()}")
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 
     def remove_current_from_liked(self) -> None:
         current = self.current_song_id()
         if current == None:
             return
-        self.remove_items_from_liked(songs=[current])
+        self.likedSongToggle([current], True)
 
     def add_current_to_liked(self) -> None:
         current = self.current_song_id()
         if current == None:
             return
-        self.add_items_to_liked(songs=[current])
+        self.likedSongToggle([current])
+
 
 # ---------------------------------------------------------------------------------------------
+
     def add_current_to_playlist(self, playlist) -> None:
         current = self.current_song_id()
         if current == None:
@@ -203,17 +192,18 @@ class Spotify_custom():
 
 # ───────────────────────────────────UpdateToken─────────────────────────────────────────────
 
+
     def tkn_update(self, flag=False) -> None:
         self.th[0] = threading.Timer(3600, self.tkn_update)
         self.th[0].start()
 
         if flag:
             print(
-                f'{self.line2}\nSPOTIFY UPDATER │ {str(datetime.datetime.now()).replace(" "," │ ")}\n{self.line2}')
+                f'{self.line()}\nSPOTIFY UPDATER │ {str(datetime.datetime.now()).replace(" "," │ ")}\n{self.line()}')
             return
 
         print(
-            f'TOKEN UPDATED │ {str(datetime.datetime.now()).replace(" "," │ ")}\n{self.line2}')
+            f'TOKEN UPDATED │ {str(datetime.datetime.now()).replace(" "," │ ")}\n{self.line()}')
 
         self.oauth.refresh_access_token(self.RTOKEN)
         self.TOKEN = self.oauth.get_access_token(as_dict=False)
