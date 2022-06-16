@@ -12,8 +12,8 @@ from pynput import keyboard
 def press(key):
     global pause
     # FULLY CUSTOMIZABLE SHORCUTS
-    # "Key" : [action,parameter( for example playlist id)]
-    # "Key" : [action,None] -> without any parameters
+    # "Key" : [action,parameter] ->Used for [add_current_to_playlist,remove_current_from_playlist] commands
+    # "Key" : [action,None] ->Used for [ add_current_to_liked,remove_current_from_liked,loop_toggle,shuffle_toggle] commands
 
     # Spotify available actions:[
     #   add_current_to_playlist , remove_current_from_playlist
@@ -25,15 +25,12 @@ def press(key):
 
         "f7": [spotify.remove_current_from_playlist, 'PLAYLIST_ID'],
         "f8": [spotify.add_current_to_playlist, 'PLAYLIST_ID'],
-        # MY PLAYLISTS :)
-        "\\": [spotify.remove_current_from_playlist, 'PLAYLIST_ID'],
-        "]": [spotify.add_current_to_playlist, 'PLAYLIST_ID'],
 
         "+": [spotify.add_current_to_liked, None],
         "-": [spotify.remove_current_from_liked, None],
         "<": [spotify.loop_toggle, None],
         "M": [spotify.shuffle_toggle, None],
-        # don't change 'pause'
+        #don't change "pause"
         "pause": "f5"
     }
 
