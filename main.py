@@ -23,11 +23,11 @@ def press(key):
     shorcuts = {
         "f9": [close, None],
 
-        "f7": [spotify.remove_current_from_playlist, '0XEZPioQQwZfuiTpVAGNlp'],
-        "f8": [spotify.add_current_to_playlist, '0XEZPioQQwZfuiTpVAGNlp'],
+        "f7": [spotify.remove_current_from_playlist, 'PLAYLIST_ID'],
+        "f8": [spotify.add_current_to_playlist, 'PLAYLIST_ID'],
         # MY PLAYLISTS :)
-        "\\": [spotify.remove_current_from_playlist, '1OlRxahyVfzqjLtJltXmlZ'],
-        "]": [spotify.add_current_to_playlist, '1OlRxahyVfzqjLtJltXmlZ'],
+        "\\": [spotify.remove_current_from_playlist, 'PLAYLIST_ID'],
+        "]": [spotify.add_current_to_playlist, 'PLAYLIST_ID'],
 
         "+": [spotify.add_current_to_liked, None],
         "-": [spotify.remove_current_from_liked, None],
@@ -68,7 +68,6 @@ def press(key):
 def close():
     print(f"BYE!\n{spotify.line2}")
     spotify.exit()
-    sleep(2)
     exit()
 
 
