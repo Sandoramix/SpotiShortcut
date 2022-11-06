@@ -1,5 +1,4 @@
 from pynput import keyboard
-import os
 import threading
 from time import sleep
 import Spotify_custom as s
@@ -25,11 +24,12 @@ def press(key):
     shorcuts = {
         "f10": [close, None],
 
-        "f6": [spotify.remove_current_from_playlist, '0XEZPioQQwZfuiTpVAGNlp'],
-        "f7": [spotify.add_current_to_playlist, '0XEZPioQQwZfuiTpVAGNlp'],
-        # MY PLAYLISTS :)
-        # "\\": [spotify.remove_current_from_playlist, '1OlRxahyVfzqjLtJltXmlZ'],
-        # "]": [spotify.add_current_to_playlist, '1OlRxahyVfzqjLtJltXmlZ'],
+        "f6": [spotify.remove_current_from_playlist, 'PLAYLIST'],
+        "f7": [spotify.add_current_to_playlist, 'PLAYLIST'],
+        "\\": [spotify.remove_current_from_playlist, 'PLAYLIST'],
+        "]": [spotify.add_current_to_playlist, 'PLAYLIST'],
+        ".": [spotify.remove_current_from_playlist, 'PLAYLIST'],
+        "'": [spotify.add_current_to_playlist, 'PLAYLIST'],
 
         "f2": [spotify.add_current_to_liked, None],
         "f3": [spotify.remove_current_from_liked, None],
