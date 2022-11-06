@@ -16,18 +16,18 @@ class Spotify_custom():
     def __init__(self) -> None:
 
         self.th = [None]
-        # ------------------------------------------------
+
         self.API = os.environ['API']
         self.ID = os.environ['CLIENT_ID']
         self.SECRET = os.environ['CLIENT_SECRET']
         self.RED_URL = os.environ['RED_URL']
         self.SCOPES = os.environ['SCOPES']
-        # ------------------------------------------------
+
         self.oauth = SpotifyOAuth(
             client_id=self.ID, client_secret=self.SECRET, redirect_uri=self.RED_URL, scope=self.SCOPES)
         self.session = Spotify(oauth_manager=self.oauth)
         self.RTOKEN = self.oauth.get_access_token()["refresh_token"]
-        # ------------------------------------------------
+
         self.TOKEN = self.oauth.get_access_token(as_dict=False)
         self.tkn_update(True)
 
@@ -36,20 +36,19 @@ class Spotify_custom():
     def line(self, ch="─", length=50) -> str:
         return ch*length
 
-    def current_playback(self) -> dict or None:
+    def current_playback(self, section=None) -> dict or None:
         raw = self.session.current_playback()
         if not raw:
-            msg = "EXECUTION ERROR, TRY AGAIN"
-            print(f'{msg}\n{self.line(length=len(msg))}')
+            print(f'EXECUTION ERROR, TRY AGAIN\n{self.line()}')
             return None
-        return raw
+        return raw if not section else raw[section]
 
     def loop_toggle(self) -> None:
-        state = self.current_playback()
-        msg = "STATE CHANGED TO "
+        state = self.current_playback("repeat_state")
+
         if not state:
             return
-        state = state["repeat_state"]
+
         changed_state = "off"
         if state == "off":
             changed_state = "context"
@@ -58,84 +57,66 @@ class Spotify_custom():
 
         self.session.repeat(changed_state)
         state = changed_state.upper()
-        print(f'{msg}{state}\n{self.line(length=len(msg+state))}')
+        print(f'STATE CHANGED TO {state}\n{self.line()}')
 
     def shuffle_toggle(self) -> None:
-        state = self.current_playback()
-        msg = "SHUFFLE "
+        state = self.current_playback("shuffle_state")
         if not state:
             return
 
-        state = state["shuffle_state"]
-        changed_state = "ON"
-        if state:
-            changed_state = "OFF"
         self.session.shuffle(not state)
-        print(f'{msg}{changed_state}\n{self.line(length=len(msg+changed_state))}')
+        print(f'SHUFFLE => {"ON" if not state else "OFF"}\n{self.line()}')
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 
-    def likedSongToggle(self, songs=[], removing=False) -> None:
+    def likedSongsHandler(self, songs=[], removing=False) -> None:
         check = self.items_in_saved_check(songs)
         for i in range(len(songs)):
+            result = False
             if check[i] == removing:
                 if removing:
                     self.session.current_user_saved_tracks_delete([songs[i]])
                 else:
                     self.session.current_user_saved_tracks_add([songs[i]])
-                print(
-                    f"[TRUE] SONG {'ADDED TO' if not removing else 'REMOVED FROM'} LIKED:\n=> {self.song_name(songs[i])}\n{self.line()}")
-            else:
-                print(
-                    f"[FALSE] SONG {'ADDED TO' if not removing else 'REMOVED FROM'} LIKED:\n=> {self.song_name(songs[i])}\n{self.line()}")
+                result = True
+            print(f"[{'TRUE' if result else 'FALSE'}] SONG {'ADDED TO' if not removing else 'REMOVED FROM'} LIKED:\n=> {self.song_name(songs[i])}\n{self.line()}")
 
-    def add_items_to_playlist(self, playlist, songs=[]) -> None:
+    def playlistSongsHandler(self, playlist, songs=[], removing=False) -> None:
         for i in songs:
-            if not self.db.playlist_has_song(playlist, i):
-                self.session.playlist_add_items(playlist, songs)
+            songExistInPlaylist = self.db.playlist_has_song(playlist, i)
+            result = False
 
+            song = self.db.song(i)
+            if not song:
                 song = self.db.json_extract_song_info(self.session.track(i))
 
-                self.db.playlist_add_song(playlist, song)
-                print(
-                    f"[TRUE] SONG ADDED TO PLAYLIST:\n=> {song[1]} ─ {song[2]}\n{self.line()}")
-            else:
-                song = self.db.song(i)
-                print(
-                    f"[FALSE] SONG ADDED TO PLAYLIST:\n=> {song[1]} ─ {song[2]}\n{self.line()}")
-
-# ---------------------------------------------------------------------------------------------
-
-    def remove_items_from_playlist(self, playlist, songs=[]) -> None:
-        for i in songs:
-            if self.db.playlist_has_song(playlist, i):
+            if removing and songExistInPlaylist:
                 self.session.playlist_remove_all_occurrences_of_items(
                     playlist, songs)
-
-                song = self.db.song(i)
-
                 self.db.playlist_delete_song(playlist, song[0])
+                result = True
 
-                print(
-                    f"[TRUE] SONG DELETED FROM PLAYLIST:\n=> {song[1]} ─ {song[2]}\n{self.line()}")
-            else:
-                song = self.db.json_extract_song_info(self.session.track(i))
+            elif not removing and not songExistInPlaylist:
+                self.session.playlist_add_items(playlist, songs)
+                self.db.playlist_add_song(playlist, song)
+                result = True
+            print(f"[{'TRUE' if result else 'FALSE'}] SONG {'REMOVED FROM' if removing else 'ADDED TO'} PLAYLIST:\n=> {self.song_name(song)})\n{self.line()}")
+# ---------------------------------------------------------------------------------------------
 
-                print(
-                    f"[FALSE] SONG DELETED FROM PLAYLIST:\n=> {song[1]} ─ {song[2]}\n{self.line()}")
+
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 
     def remove_current_from_liked(self) -> None:
         current = self.current_song_id()
         if current == None:
             return
-        self.likedSongToggle([current], True)
+        self.likedSongsHandler([current], True)
 
     def add_current_to_liked(self) -> None:
         current = self.current_song_id()
         if current == None:
             return
-        self.likedSongToggle([current])
+        self.likedSongsHandler([current])
 
 
 # ---------------------------------------------------------------------------------------------
@@ -144,27 +125,26 @@ class Spotify_custom():
         current = self.current_song_id()
         if current == None:
             return
-        self.add_items_to_playlist(songs=[current], playlist=playlist)
+        self.playlistSongsHandler(playlist, [current])
 
     def remove_current_from_playlist(self, playlist) -> None:
         current = self.current_song_id()
         if current == None:
             return
-        self.remove_items_from_playlist(songs=[current], playlist=playlist)
+        self.playlistSongsHandler(playlist, [current], True)
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 
     def items_in_saved_check(self, songs=[]) -> list:
-        try:
-            return list(requests.get('https://api.spotify.com/v1/me/tracks/contains?ids='+','.join(songs), headers={'Authorization': f'Bearer {self.TOKEN}'}).json())
-        except:
-            return [False for i in songs]
+        if len(songs) == 0:
+            return None
+        return self.session.current_user_saved_tracks_contains(songs)
 
     def song_ids_from_playlist(self, playlist) -> list:
-        raw = self.session.playlist(
-            playlist_id=playlist, fields='tracks.items(track(id))')
         ids = []
-        for i in raw['tracks']['items']:
-            ids.append(i['track']['id'])
+        tracks = self.db.playlist_json(playlist)['tracks']
+
+        for i in tracks:
+            ids.append(i[0])
 
         return ids
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -182,12 +162,12 @@ class Spotify_custom():
             return None
         return raw[0]
 
-    def song_name(self, song=None) -> str:
+    def song_name(self, song=None, local=False) -> str:
         if song == None:
             song = self.db.json_extract_song_info(self.current_song())
         elif isinstance(song, str):
             song = self.db.json_extract_song_info(self.session.track(song))
-        return song[1] + ' - ' + song[2]
+        return song[1] + ' (' + song[2]+')'
 
 
 # ───────────────────────────────────UpdateToken─────────────────────────────────────────────
