@@ -13,8 +13,8 @@ def press(key):
     global pause
     #
     # FULLY CUSTOMIZABLE SHORCUTS
-    # "Key" : [action,parameter( for example playlist id)]
-    # "Key" : [action,None] -> without any parameters
+    # "Key" : [action,parameter] ->Used for [add_current_to_playlist,remove_current_from_playlist] commands
+    # "Key" : [action,None] ->Used for [ add_current_to_liked,remove_current_from_liked,loop_toggle,shuffle_toggle] commands
 
     # Spotify available actions:[
     #   add_current_to_playlist , remove_current_from_playlist
@@ -23,6 +23,7 @@ def press(key):
     # ]
     shorcuts = {
         "f10": [close, None],
+
 
         "f6": [spotify.remove_current_from_playlist, 'PLAYLIST'],
         "f7": [spotify.add_current_to_playlist, 'PLAYLIST'],
