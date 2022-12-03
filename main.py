@@ -52,7 +52,8 @@ def updateShortcuts():
 	populateShortcuts(PAUSE,None)
 
 	populateShortcuts(UPD_SHORTCUTS,updateShortcuts)
-	print(line("-"))
+	
+	print(f"UPDATED SHORTCUTS\n{line()}")
 
 	
 updateShortcuts()
