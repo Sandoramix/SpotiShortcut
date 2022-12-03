@@ -6,10 +6,18 @@ import app.Spotify_custom as s
 from app.utils import *
 
 
-CONFIG_PATH=os.path.abspath("./config.yaml")
 
-CONFIG=loadConfig(CONFIG_PATH)
 
+
+
+
+CONFIG={}
+
+def updateConfig():
+	global CONFIG
+	CONFIG_PATH=os.path.abspath("./config.yaml")
+	CONFIG=loadConfig(CONFIG_PATH)
+updateConfig()
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -39,8 +47,8 @@ def populateShortcuts(name,command,multiple=False):
 	
 
 def updateShortcuts():
-	global SHORTCUTS,CONFIG
-	CONFIG=loadConfig(CONFIG_PATH)
+	global SHORTCUTS
+	updateConfig()
 	SHORTCUTS={}
 	populateShortcuts(ADD_TO_PLAYLIST,SPOTIFY.add_current_to_playlist,True)
 	populateShortcuts(REM_FR_PLAYLIST,SPOTIFY.remove_current_from_playlist,True)
