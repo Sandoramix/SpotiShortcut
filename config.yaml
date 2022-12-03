@@ -1,0 +1,18 @@
+# TEMPLATE
+addToPlaylist:
+  f5: playlist_id
+  f7: playlist2_id
+
+removeFromPlaylist:
+  f6: playlist_id
+  f8: playlist2_id
+
+
+addToLiked: f3
+removeFromLiked: f2
+
+updateShortcuts: f9
+# toggleLoop: key
+# toggleShuffle: key
+pause: pause
+close: f10
