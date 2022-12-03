@@ -5,6 +5,7 @@ import threading
 from app.utils import line,SCOPES,API
 
 from spotipy import Spotify
+from spotipy.exceptions import SpotifyException
 from spotipy.oauth2 import SpotifyOAuth
 
 
@@ -88,16 +89,22 @@ class Spotify_custom():
             if not song:
                 song = self.db.json_extract_song_info(self.session.track(i))
 
-            if removing and songExistInPlaylist:
-                self.session.playlist_remove_all_occurrences_of_items(
-                    playlist, songs)
-                self.db.playlist_delete_song(playlist, song[0])
-                result = True
+            try:
+                if removing:
+                    res=self.session.playlist_remove_all_occurrences_of_items(playlist, songs)
+                    if  songExistInPlaylist:
+                        self.db.playlist_delete_song(playlist, song[0])
+                    result = True and res!=None
 
-            elif not removing and not songExistInPlaylist:
-                self.session.playlist_add_items(playlist, songs)
-                self.db.playlist_add_song(playlist, song)
-                result = True
+                elif not removing:
+                    res=self.session.playlist_add_items(playlist, songs)
+                    if not songExistInPlaylist:
+                        self.db.playlist_add_song(playlist, song)
+                    result = True and res!=None
+            except SpotifyException:
+                print(f"[ERROR] PROBABLY INVALID PLAYLIST ID\n{line()}")
+                return 
+                
             print(f"[{'TRUE' if result else 'FALSE'}] SONG {'REMOVED FROM' if removing else 'ADDED TO'} PLAYLIST:\n=> {self.song_name(song)})\n{line()}")
 # ---------------------------------------------------------------------------------------------
 
