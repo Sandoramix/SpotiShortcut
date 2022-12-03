@@ -81,6 +81,7 @@ class Spotify_custom():
             print(f"[{'TRUE' if result else 'FALSE'}] SONG {'ADDED TO' if not removing else 'REMOVED FROM'} LIKED:\n=> {self.song_name(songs[i])}\n{line()}")
 
     def playlistSongsHandler(self, playlist, songs=[], removing=False) -> None:
+        
         for i in songs:
             songExistInPlaylist = self.db.playlist_has_song(playlist, i)
             result = False
@@ -88,8 +89,11 @@ class Spotify_custom():
             song = self.db.song(i)
             if not song:
                 song = self.db.json_extract_song_info(self.session.track(i))
-
+            
+            
             try:
+                PLAYLIST=self.session.playlist(playlist)
+                if not PLAYLIST: raise SpotifyException(-1,404,"Playlist doesn't exist")
                 if removing and songExistInPlaylist:
                     self.session.playlist_remove_all_occurrences_of_items(playlist, songs)
                     self.db.playlist_delete_song(playlist, song[0])
@@ -99,11 +103,15 @@ class Spotify_custom():
                     self.session.playlist_add_items(playlist, songs)
                     self.db.playlist_add_song(playlist, song)
                     result = True
-                    
+            except KeyboardInterrupt:
+                self.exit()
+            
             except SpotifyException:
                 print(f"[ERROR] INVALID PLAYLIST ID\n{line()}")
-                return
-            print(f"[{'TRUE' if result else 'FALSE'}] SONG {'REMOVED FROM' if removing else 'ADDED TO'} PLAYLIST:\n=> {self.song_name(song)})\n{line()}")
+                continue
+            except Exception as e:
+                print(e)
+            print(f"[{'TRUE' if result else 'FALSE'}] SONG {'REMOVED FROM' if removing else 'ADDED TO'} PLAYLIST {'['+PLAYLIST['name']+']' if 'name' in PLAYLIST else None}\n=> {self.song_name(song)}\n{line()}")
 # ---------------------------------------------------------------------------------------------
 
 
@@ -170,7 +178,7 @@ class Spotify_custom():
             song = self.db.json_extract_song_info(self.current_song())
         elif isinstance(song, str):
             song = self.db.json_extract_song_info(self.session.track(song))
-        return song[1] + ' (' + song[2]+')'
+        return song[1] + ' [' + song[2]+']'
 
 
 # ───────────────────────────────────UpdateToken─────────────────────────────────────────────
