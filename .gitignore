@@ -4,3 +4,5 @@ __pycache__
 python-env
 .env
 .cache
+start.bat
+spotify.db
