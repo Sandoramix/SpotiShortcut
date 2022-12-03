@@ -52,7 +52,7 @@ class SpotifyDB():
         print(f'\nDATABASE UPDATED\n{self.line2}')
 
 # -------------------------------------GetData----------------------------------------------
-    def song(self, id) -> tuple:
+    def song(self, id) -> (tuple or None):
         if not self.has_song(id):
             return None
         return self.exec("select * from song where song_id='"+id+"'", fetch=1)

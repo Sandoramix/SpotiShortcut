@@ -1,4 +1,4 @@
-import os
+from pynput import keyboard
 import threading
 from time import sleep
 import Spotify_custom as s
@@ -8,9 +8,10 @@ load_dotenv()
 
 pause = False
 
-from pynput import keyboard
+
 def press(key):
     global pause
+    #
     # FULLY CUSTOMIZABLE SHORCUTS
     # "Key" : [action,parameter] ->Used for [add_current_to_playlist,remove_current_from_playlist] commands
     # "Key" : [action,None] ->Used for [ add_current_to_liked,remove_current_from_liked,loop_toggle,shuffle_toggle] commands
@@ -21,17 +22,22 @@ def press(key):
     #   loop_toggle , shuffle_toggle
     # ]
     shorcuts = {
-        "f9": [close, None],
+        "f10": [close, None],
 
-        "f7": [spotify.remove_current_from_playlist, 'PLAYLIST_ID'],
-        "f8": [spotify.add_current_to_playlist, 'PLAYLIST_ID'],
 
-        "+": [spotify.add_current_to_liked, None],
-        "-": [spotify.remove_current_from_liked, None],
-        "<": [spotify.loop_toggle, None],
-        "M": [spotify.shuffle_toggle, None],
-        #don't change "pause"
-        "pause": "f5"
+        "f6": [spotify.remove_current_from_playlist, 'PLAYLIST'],
+        "f7": [spotify.add_current_to_playlist, 'PLAYLIST'],
+        "\\": [spotify.remove_current_from_playlist, 'PLAYLIST'],
+        "]": [spotify.add_current_to_playlist, 'PLAYLIST'],
+        ".": [spotify.remove_current_from_playlist, 'PLAYLIST'],
+        "'": [spotify.add_current_to_playlist, 'PLAYLIST'],
+
+        "f2": [spotify.add_current_to_liked, None],
+        "f3": [spotify.remove_current_from_liked, None],
+        # "<": [spotify.loop_toggle, None],
+        # "M": [spotify.shuffle_toggle, None],
+        # don't change 'pause'
+        "pause": "f4"
     }
 
     try:
@@ -44,10 +50,10 @@ def press(key):
     if k == shorcuts['pause']:
         pause = not pause
         if not pause:
-            print(f"RESUMED\n{spotify.line2}")
+            print(f"RESUMED\n{spotify.line()}")
 
     if pause and (k in list(shorcuts.keys()) or k == shorcuts['pause']):
-        print(f"PAUSED [F5 for resume]\n{spotify.line2}")
+        print(f"PAUSED [{shorcuts['pause']} for resume]\n{spotify.line()}")
         return
 
     if pause:
@@ -63,8 +69,9 @@ def press(key):
 
 
 def close():
-    print(f"BYE!\n{spotify.line2}")
+    print(f"BYE!\n{spotify.line()}")
     spotify.exit()
+    sleep(2)
     exit()
 
 
