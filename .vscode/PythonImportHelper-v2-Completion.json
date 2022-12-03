@@ -1,0 +1,192 @@
+[
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "delete",
+        "importPath": "requests.api",
+        "description": "requests.api",
+        "isExtraImport": true,
+        "detail": "requests.api",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "Spotify",
+        "importPath": "spotipy",
+        "description": "spotipy",
+        "isExtraImport": true,
+        "detail": "spotipy",
+        "documentation": {}
+    },
+    {
+        "label": "SpotifyOAuth",
+        "importPath": "spotipy.oauth2",
+        "description": "spotipy.oauth2",
+        "isExtraImport": true,
+        "detail": "spotipy.oauth2",
+        "documentation": {}
+    },
+    {
+        "label": "SpotifyDB",
+        "importPath": "Spotify_custom.database",
+        "description": "Spotify_custom.database",
+        "isExtraImport": true,
+        "detail": "Spotify_custom.database",
+        "documentation": {}
+    },
+    {
+        "label": "sleep",
+        "importPath": "time",
+        "description": "time",
+        "isExtraImport": true,
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "Spotify_custom",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "Spotify_custom",
+        "description": "Spotify_custom",
+        "detail": "Spotify_custom",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "keyboard",
+        "importPath": "pynput",
+        "description": "pynput",
+        "isExtraImport": true,
+        "detail": "pynput",
+        "documentation": {}
+    },
+    {
+        "label": "SpotifyDB",
+        "kind": 6,
+        "importPath": "Spotify_custom.database",
+        "description": "Spotify_custom.database",
+        "peekOfCode": "class SpotifyDB():\n    def __init__(self, spotify_session) -> None:\n        \"\"\"Initialize database\n        spotify_session= spotipy.Spotify() object\n        \"\"\"\n        self.line = \"-\"*50\n        self.line2 = \"─\"*50\n        self.initialize()\n        self.session = spotify_session\n        self.username = self.session.current_user()[\"id\"]",
+        "detail": "Spotify_custom.database",
+        "documentation": {}
+    },
+    {
+        "label": "Spotify_custom",
+        "kind": 6,
+        "importPath": "Spotify_custom.spotify_class",
+        "description": "Spotify_custom.spotify_class",
+        "peekOfCode": "class Spotify_custom():\n    def __init__(self) -> None:\n        self.line2 = \"─\"*50\n        self.th = [None]\n        # ------------------------------------------------\n        self.API = os.environ['API']\n        self.ID = os.environ['CLIENT_ID']\n        self.SECRET = os.environ['CLIENT_SECRET']\n        self.RED_URL = os.environ['RED_URL']\n        self.SCOPES = os.environ['SCOPES']",
+        "detail": "Spotify_custom.spotify_class",
+        "documentation": {}
+    },
+    {
+        "label": "press",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def press(key):\n    global pause\n    # FULLY CUSTOMIZABLE SHORCUTS\n    # \"Key\" : [action,parameter] ->Used for [add_current_to_playlist,remove_current_from_playlist] commands\n    # \"Key\" : [action,None] ->Used for [ add_current_to_liked,remove_current_from_liked,loop_toggle,shuffle_toggle] commands\n    # Spotify available actions:[\n    #   add_current_to_playlist , remove_current_from_playlist\n    #   add_current_to_liked , remove_current_from_liked\n    #   loop_toggle , shuffle_toggle\n    # ]",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "close",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def close():\n    print(f\"BYE!\\n{spotify.line2}\")\n    spotify.exit()\n    exit()\nspotify = s.Spotify_custom()\ndef listener():\n    with keyboard.Listener(on_press=press) as listener:\n        listener.join()\nth1 = threading.Thread(target=listener, name=\"LISTENER\").start()",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "listener",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def listener():\n    with keyboard.Listener(on_press=press) as listener:\n        listener.join()\nth1 = threading.Thread(target=listener, name=\"LISTENER\").start()",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "pause",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "pause = False\nfrom pynput import keyboard\ndef press(key):\n    global pause\n    # FULLY CUSTOMIZABLE SHORCUTS\n    # \"Key\" : [action,parameter] ->Used for [add_current_to_playlist,remove_current_from_playlist] commands\n    # \"Key\" : [action,None] ->Used for [ add_current_to_liked,remove_current_from_liked,loop_toggle,shuffle_toggle] commands\n    # Spotify available actions:[\n    #   add_current_to_playlist , remove_current_from_playlist\n    #   add_current_to_liked , remove_current_from_liked",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "spotify",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "spotify = s.Spotify_custom()\ndef listener():\n    with keyboard.Listener(on_press=press) as listener:\n        listener.join()\nth1 = threading.Thread(target=listener, name=\"LISTENER\").start()",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "th1",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "th1 = threading.Thread(target=listener, name=\"LISTENER\").start()",
+        "detail": "main",
+        "documentation": {}
+    }
+]
