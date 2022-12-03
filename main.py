@@ -40,6 +40,7 @@ def populateShortcuts(name,command,multiple=False):
 
 def updateShortcuts():
 	global SHORTCUTS
+	loadConfig(CONFIG_PATH)
 	SHORTCUTS={}
 	populateShortcuts(ADD_TO_PLAYLIST,SPOTIFY.add_current_to_playlist,True)
 	populateShortcuts(REM_FR_PLAYLIST,SPOTIFY.remove_current_from_playlist,True)
