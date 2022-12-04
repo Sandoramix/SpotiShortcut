@@ -2,8 +2,6 @@ import os
 import sqlite3
 from typing import Tuple
 
-from requests.api import delete
-
 
 class SpotifyDB():
     def __init__(self, spotify_session) -> None:
