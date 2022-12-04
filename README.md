@@ -5,11 +5,9 @@
 - Adding/removing it from playlist/liked
 - Toggling the shuffle or loop button
 
-**It is my personal project, where i wanted to use [spotify api & pynput & sqlite3] for a simple actions automization**
-
 ---
 
-# Installation
+## Installation
 
 - Go to [Spotify Developers Dashboard](https://developer.spotify.com/dashboard/) and create an application
 
