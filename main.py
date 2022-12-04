@@ -49,7 +49,7 @@ def populateShortcuts(name,command,multiple=False):
 
 	for key,value in data.items():
 		if not value or type(value) is not str: continue
-		SHORTCUTS[key]=[command,value]
+		SHORTCUTS[key.lower()]=[command,value]
 	
 
 def updateShortcuts():
@@ -82,15 +82,19 @@ def press(key):
 
 
 	k = key.char if hasattr(key,'char') else key.name if hasattr(key,'name') else key
-	
-	if k == SHORTCUTS['pause']:
+
+	if k == CONFIG[PAUSE]:
 			pause = not pause
 			if not pause:
 					print(f"RESUMED\n{line()}")
-
-	if pause and (k in list(SHORTCUTS.keys()) or k == SHORTCUTS[PAUSE]):
-			print(f"PAUSED [{SHORTCUTS['pause']} for resume]\n{line()}")
+			else:
+				print(f"PAUSED -> press [{CONFIG[PAUSE]}] to resume\n{line()}")
 			return
+
+	if pause and k in SHORTCUTS.keys():
+			print(f"PAUSED -> press [{CONFIG[PAUSE]}] to resume\n{line()}")
+			return
+
 	if pause:
 			return
 

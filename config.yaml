@@ -1,11 +1,10 @@
 # TEMPLATE
+#  0XEZPioQQwZfuiTpVAGNlp - anime chill
 addToPlaylist:
-  f5: playlist_id
-  f7: playlist2_id
+  f7: 0XEZPioQQwZfuiTpVAGNlp
 
 removeFromPlaylist:
-  f6: playlist_id
-  f8: playlist2_id
+  f8: 0XEZPioQQwZfuiTpVAGNlp
 
 
 addToLiked: f3
