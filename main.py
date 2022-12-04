@@ -58,6 +58,8 @@ def updateShortcuts():
 	
 	populateShortcuts(TGL_LOOP,SPOTIFY.loop_toggle)
 	populateShortcuts(TGL_SHUFFLE,SPOTIFY.shuffle_toggle)
+	
+	populateShortcuts(CLOSE,close)
 	populateShortcuts(PAUSE,None)
 
 	populateShortcuts(UPD_SHORTCUTS,updateShortcuts)
