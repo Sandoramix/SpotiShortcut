@@ -26,6 +26,12 @@ pause = False
 SPOTIFY = s.Spotify_custom()
 
 
+def close():
+	print(f"BYE!\n{line()}")
+	SPOTIFY.exit()
+	sleep(2)
+	exit()
+
 SHORTCUTS={}
 
 def populateShortcuts(name,command,multiple=False):
@@ -97,11 +103,7 @@ def press(key):
 			SHORTCUTS[k][0]()
 
 
-def close():
-	print(f"BYE!\n{SPOTIFY.line()}")
-	SPOTIFY.exit()
-	sleep(2)
-	exit()
+
 
 
 

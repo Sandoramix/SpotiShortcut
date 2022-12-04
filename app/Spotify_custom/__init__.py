@@ -169,7 +169,7 @@ class Spotify_custom():
     def current_song_id(self) -> str:
         raw = self.current_song()
         if raw == None:
-            print('NO SONG IS PLAYING')
+            print(f'NO SONG IS PLAYING\n{line()}')
             return None
         return raw[0]
 
@@ -204,5 +204,5 @@ class Spotify_custom():
         try:
             self.th[0].cancel()
         except:
-            print("ERROR WITH CLOSING THE TIMER THREAD")
+            print(f"ERROR WITH CLOSING THE TIMER THREAD\n{line()}")
         SystemExit()
