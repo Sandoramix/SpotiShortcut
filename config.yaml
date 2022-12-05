@@ -1,17 +1,17 @@
-# TEMPLATE
-#  0XEZPioQQwZfuiTpVAGNlp - anime chill
+# TEMPLATE (change only "key" and "playlist_id")
+
 addToPlaylist:
-  f7: 0XEZPioQQwZfuiTpVAGNlp
+  key: playlist_id
 
 removeFromPlaylist:
-  f8: 0XEZPioQQwZfuiTpVAGNlp
+  key: playlist_id
 
 
-addToLiked: f3
-removeFromLiked: f2
+addToLiked: key
+removeFromLiked: key
 
-updateShortcuts: f9
-# toggleLoop: key
-# toggleShuffle: key
-pause: pause
-close: f10
+updateShortcuts: key
+toggleLoop: key
+toggleShuffle: key
+pause: key
+close: key 
