@@ -1,6 +1,7 @@
 # SpotiShortcut
 
 **With this app you can easily manage currently listening song with custom shortcuts**.
+**It also uses a local sqlite database for songs caching**.
 
 - Adding/removing it from playlist/liked
 - Toggling the shuffle or loop button
