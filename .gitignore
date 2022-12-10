@@ -4,6 +4,7 @@ __pycache__
 python-env
 .env
 .cache
+config.yaml
 start.bat
 spotify.db
 config.yaml
