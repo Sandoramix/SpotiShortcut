@@ -1,40 +1,39 @@
 import os
-from pynput import keyboard
+from pynput import keyboard as pyk
 from app.utils import forgeHotkey, formatKey, isSpecialKey
 
 # The currently pressed keys
 CURRENT=set()
 
 
-LISTENER: keyboard.Listener=None
+LISTENER: pyk.Listener=None
 
 
 
-def on_press(key: (keyboard.Key | keyboard.KeyCode | None)):
+def onPress(key: (pyk.Key | pyk.KeyCode | None)):
 	if LISTENER==None or key==None: return
 	CURRENT.add(key)
 
-	if key == keyboard.Key.esc and LISTENER:
+	if key == pyk.Key.esc and LISTENER:
 		LISTENER.stop()
 
 
-def on_release(key: (keyboard.Key | keyboard.KeyCode | None)):
+
+def onRelease(key: (pyk.Key | pyk.KeyCode | None)):
 	if LISTENER==None or key==None: return
 	global CURRENT
 	
-
 	currentKeys=list(CURRENT)
 	currentKeys.sort(key=lambda x: chr(0) if isSpecialKey(x) else formatKey(x,LISTENER.canonical(x)))
 
 	if key in CURRENT:
 		CURRENT=set()
 
-	strKeys:list[str]=[]
-	for k in currentKeys:
-		_formatted=formatKey(k,LISTENER.canonical(k))
-		if _formatted!=None:
-			strKeys.append(_formatted)
-
+	strKeys:list[str]=[
+		formatKey(k,LISTENER.canonical(k))
+		for k in currentKeys
+		if formatKey(k,LISTENER.canonical(k)) !=None
+	]
 
 	if len(strKeys)==0: return
 	finalHotkey=forgeHotkey(strKeys)
@@ -49,10 +48,10 @@ def on_release(key: (keyboard.Key | keyboard.KeyCode | None)):
 
 
 def main():
-	"""Easy way to find out the keyboard name
+	"""helper that is used to find which string of key combinations to insert in the configuration file
 	"""
 	global LISTENER
-	LISTENER=keyboard.Listener(on_press=on_press, on_release=on_release)
+	LISTENER=pyk.Listener(on_press=onPress, on_release=onRelease)
 	try:
 		LISTENER.start()
 		LISTENER.join()
