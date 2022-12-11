@@ -1,0 +1,24 @@
+# TEMPLATE (change only "key" and "playlist_id")
+
+addToPlaylist:
+  key1: playlist_id
+
+  # if you want a hotkey with multiple keys, use this syntax
+  <key2>+<key3>: playlist2_id
+
+removeFromPlaylist:
+  key4: playlist_id
+  keyN: playlist2_id
+
+
+addToLiked: key
+removeFromLiked: key
+
+updateShortcuts: key
+toggleLoop: key
+toggleShuffle: key
+pause: key
+close: key
+
+
+# SAVE THIS FILE TO config.yaml
