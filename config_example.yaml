@@ -1,14 +1,16 @@
-# TEMPLATE (change only "key" and "playlist_id")
+# TEMPLATE 
+# Modify only "key" and "playlist_id"
+# Don't use tabs, only 2 whitespaces
 
 addToPlaylist:
-  key1: playlist_id
+  key: playlist_id
 
-  # if you want a hotkey with multiple keys, use this syntax
-  <key2>+<key3>: playlist2_id
+  # if you want a shortcut with multiple keys, use this syntax
+  <key>+<key>: playlist_id
 
 removeFromPlaylist:
-  key4: playlist_id
-  keyN: playlist2_id
+  key: playlist_id
+  key: playlist2_id
 
 
 addToLiked: key
