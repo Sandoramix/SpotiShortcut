@@ -16,7 +16,7 @@ class SpotifyDB():
         self.session = spotify_session
         self.username = self.session.current_user()["id"]
 
-        self.updateDB()
+        # self.updateDB()
 
     def initialize(self) -> None:
         if not os.path.exists(self.db_path):

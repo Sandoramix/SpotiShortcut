@@ -2,20 +2,21 @@
 import os
 import datetime
 import threading
-from app.utils import line,SCOPES,API
+from app.utils import line,SCOPES
+from dotenv import load_dotenv
 
 from spotipy import Spotify
 from spotipy.exceptions import SpotifyException
 from spotipy.oauth2 import SpotifyOAuth
 
 
-from app.Spotify_custom.database import SpotifyDB
+from app.database import SpotifyDB
 
 
-class Spotify_custom():
+class CustomSpotify():
 
     def __init__(self) -> None:
-
+        load_dotenv()
         self.th = [None]
 
         self.ID = os.environ['CLIENT_ID']
