@@ -1,8 +1,8 @@
 import os
 from pynput import keyboard
-from app.utils import formatKey, isSpecialKey
+from app.utils import forgeHotkey, formatKey, isSpecialKey
 
-# The old/currently active modifiers
+# The currently pressed keys
 CURRENT=set()
 
 
@@ -20,26 +20,27 @@ def on_press(key: (keyboard.Key | keyboard.KeyCode | None)):
 
 def on_release(key: (keyboard.Key | keyboard.KeyCode | None)):
 	if LISTENER==None or key==None: return
+	global CURRENT
+	
 
-	keyList=list(CURRENT)
-	keyList.sort(key=lambda x: chr(0) if isSpecialKey(x) else formatKey(x,LISTENER.canonical(x)))
+	currentKeys=list(CURRENT)
+	currentKeys.sort(key=lambda x: chr(0) if isSpecialKey(x) else formatKey(x,LISTENER.canonical(x)))
 
 	if key in CURRENT:
-		CURRENT.remove(key)
+		CURRENT=set()
 
-	formattedKeys:list[str]=[]
-	for k in keyList:
+	strKeys:list[str]=[]
+	for k in currentKeys:
 		_formatted=formatKey(k,LISTENER.canonical(k))
 		if _formatted!=None:
-			formattedKeys.append(_formatted)
+			strKeys.append(_formatted)
 
 
-	length=len(formattedKeys)
-	if length==0: return
-	finalHotkeys=f'{formattedKeys[0]}' if length==1 else '<'+'>+<'.join(formattedKeys)+'>'
+	if len(strKeys)==0: return
+	finalHotkey=forgeHotkey(strKeys)
 
 	print()
-	print(finalHotkeys)
+	print(finalHotkey)
 
 	
 	
