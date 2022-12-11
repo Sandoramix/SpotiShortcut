@@ -1,6 +1,4 @@
-import os
-import sqlite3
-from typing import Tuple
+import os,sqlite3
 
 
 class SpotifyDB():
@@ -157,7 +155,7 @@ class SpotifyDB():
 
         return final
 
-    def json_extract_song_info(self, object) -> Tuple:
+    def json_extract_song_info(self, object) -> tuple:
         """Extract from api request only useful for this program information\n
         object= [spotify 'track' object]
         """
