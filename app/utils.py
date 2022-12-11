@@ -1,6 +1,5 @@
 import os,yaml
 import pynput.keyboard as pyk
-import pynput
 import re
 
 API="https://api.spotify.com/v1/"
@@ -60,6 +59,7 @@ def createConfig(path):
 
 def forgeHotkey(keys:(str|list[str])):
 	keys_list=keys if type(keys) is list else [keys]
+
 	if len(keys_list)==1:
 		return keys_list[0]
 	return '<'+'>+<'.join(keys_list)+'>'
