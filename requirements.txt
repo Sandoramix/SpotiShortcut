@@ -1,5 +1,5 @@
 async-timeout==4.0.2
-certifi==2022.9.24
+certifi>=2022.12.07
 charset-normalizer==2.1.1
 idna==3.4
 packaging==21.3
