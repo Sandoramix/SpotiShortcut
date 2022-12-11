@@ -1,4 +1,5 @@
 import os,sqlite3
+from app.utils import line
 
 
 class SpotifyDB():
@@ -7,14 +8,14 @@ class SpotifyDB():
         spotify_session= spotipy.Spotify() object
         """
         self.db_path=os.path.abspath('./spotify.db') 
-        self.line = "-"*50
-        self.line2 = "─"*50
+
         self.initialize()
 
         self.session = spotify_session
         self.username = self.session.current_user()["id"]
 
-        # self.updateDB()
+        # TODO IMPROVE DB UPDATING
+        self.updateDB()
 
     def initialize(self) -> None:
         if not os.path.exists(self.db_path):
@@ -44,7 +45,7 @@ class SpotifyDB():
                 us_playlists.append(playlist["id"])
 
         self.delete_old_playlists(us_playlists)
-        print(f'\nDATABASE UPDATED\n{self.line2}')
+        print(f'\nDATABASE UPDATED\n{line()}')
 
 # -------------------------------------GetData----------------------------------------------
     def song(self, id) -> (tuple or None):
