@@ -57,15 +57,26 @@ def createConfig(path):
 
 
 # PYNPUT UTILS
-def getHotkeys(string:str)->list[str]:
-	regex=re.compile(r'"<(.*?)>"g')
-	if '>+<' not in string: return [string]
-	return regex.findall(string)
 
-def sortedHotkeys(hotkeys:str):
-	new_hotkeys=getHotkeys(hotkeys)
-	new_hotkeys.sort()
-	return new_hotkeys
+def forgeHotkey(keys:(str|list[str])):
+	keys_list=keys if type(keys) is list else [keys]
+	if len(keys_list)==1:
+		return keys_list[0]
+	return '<'+'>+<'.join(keys_list)+'>'
+
+def getHotkey(string:str)->list[str]:
+	trimmed=string.replace(' ','')
+	regex=re.compile(r'<(.*?)>\+?')
+	
+	if '>+<' not in trimmed: return [trimmed]
+	
+	return regex.findall(trimmed)
+
+
+def sortedHotkey(hotkey:str):
+	new_hotkey=getHotkey(hotkey)
+	new_hotkey.sort()
+	return new_hotkey
 
 
 def isSpecialKey(key):
