@@ -1,10 +1,10 @@
 __pycache__
+
+config.yaml
 .vscode
 ./**/*
 python-env
 .env
 .cache
-config.yaml
 start.bat
 spotify.db
-config.yaml
