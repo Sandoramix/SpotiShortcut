@@ -16,7 +16,7 @@
 - Configure .env_example and save it as .env
 - Run init.bat
 - configure config_example.yaml and save it as config.yaml
-    * _If you need help with key names, run hotkey_helper.bat
+  - _If you need help with key names, run hotkey_helper.bat
 - Run generated start.bat
 
 ---
