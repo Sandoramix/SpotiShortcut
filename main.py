@@ -1,61 +1,69 @@
-import os
-from pynput import keyboard
+
+from pynput import keyboard as pyk
+
 import threading
 from time import sleep
-import app.Spotify_custom as s
+from app.custom_spotify import CustomSpotify
 from app.utils import *
 
+from dotenv import load_dotenv
 
-
-
-
-
-
-CONFIG={}
+# ----------------------------
+load_dotenv()
 
 def updateConfig():
 	global CONFIG
-	CONFIG_PATH=os.path.abspath("./config.yaml")
-	CONFIG=loadConfig(CONFIG_PATH)
-updateConfig()
-
-from dotenv import load_dotenv
-load_dotenv()
-
-pause = False
-SPOTIFY = s.Spotify_custom()
-
+	CONFIG=loadConfig("./config.yaml")
 
 def close():
 	print(f"BYE!\n{line()}")
 	SPOTIFY.exit()
+	if LISTENER: LISTENER.stop()
 	sleep(2)
-	exit()
+	exit(0)
+# ----------------------------
 
-SHORTCUTS={}
+
+CONFIG={}
+updateConfig()
+
+SPOTIFY = CustomSpotify()
+
+SHORTCUTS = {}
+
+PAUSED_STATUS = False
+
+LISTENER:pyk.Listener=None
+PRESSED_KEYS : set[(pyk.Key | pyk.KeyCode)]=set()
+
+
+
 
 def populateShortcuts(name,command,multiple=False):
 	global SHORTCUTS
+	
 	if not name in CONFIG: return None
-	data = CONFIG[name]
-	if not data: return None
-	if multiple and (type(data) is not dict): return None
-	if not multiple and (type(data) is not str): return None
+	hotkeys: (dict[str,str] | str) = CONFIG[name]
+
+	if not hotkeys: return None
+	if multiple and (type(hotkeys) is not dict): return None
+	if not multiple and (type(hotkeys) is not str): return None
 
 	if not multiple:
-		SHORTCUTS[data]=[command,None]
+		SHORTCUTS[forgeHotkey(sortedHotkey(hotkeys.lower()))]=[command,None]
 		return
 	
 
-	for key,value in data.items():
+	for hotkey,value in hotkeys.items():
 		if not value or type(value) is not str: continue
-		SHORTCUTS[key.lower()]=[command,value]
+		SHORTCUTS[forgeHotkey(sortedHotkey(hotkey.lower()))]=[command,value]
 	
 
 def updateShortcuts():
 	global SHORTCUTS
 	updateConfig()
 	SHORTCUTS={}
+
 	populateShortcuts(ADD_TO_PLAYLIST,SPOTIFY.add_current_to_playlist,True)
 	populateShortcuts(REM_FR_PLAYLIST,SPOTIFY.remove_current_from_playlist,True)
 	
@@ -70,51 +78,66 @@ def updateShortcuts():
 
 	populateShortcuts(UPD_SHORTCUTS,updateShortcuts)
 	
-	print(f"UPDATED SHORTCUTS\n{line()}")
+	print(f"SHORTCUTS UPDATED\n{line()}")
 
 	
 updateShortcuts()
 
-def press(key):
-	global pause
+
+
+def onPress(_key):
+	global PAUSED_STATUS
 	if not SHORTCUTS:
 		updateShortcuts()
 
+	PRESSED_KEYS.add(_key)
 
-	k = key.char if hasattr(key,'char') else key.name if hasattr(key,'name') else key
 
-	if k == CONFIG[PAUSE]:
-			pause = not pause
-			if not pause:
+
+	strKeys:list[str]=[ 
+		formatKey(hkey,LISTENER.canonical(hkey)) 
+		for hkey in list(PRESSED_KEYS) 
+		if formatKey(hkey,LISTENER.canonical(hkey))!=None 
+	]
+
+	if len(strKeys)==0: return
+	hotkey=forgeHotkey(strKeys)
+
+	if hotkey == CONFIG[PAUSE]:
+			PAUSED_STATUS = not PAUSED_STATUS
+			if not PAUSED_STATUS:
 					print(f"RESUMED\n{line()}")
 			else:
 				print(f"PAUSED -> press [{CONFIG[PAUSE]}] to resume\n{line()}")
 			return
 
-	if pause and k in SHORTCUTS.keys():
+	if PAUSED_STATUS and hotkey in SHORTCUTS.keys():
 			print(f"PAUSED -> press [{CONFIG[PAUSE]}] to resume\n{line()}")
 			return
 
-	if pause:
+	if PAUSED_STATUS:
 			return
 
-	if k not in SHORTCUTS:
+	if hotkey not in SHORTCUTS:
 			return
 
-	if SHORTCUTS[k][1]:
-			SHORTCUTS[k][0](SHORTCUTS[k][1])
+	if SHORTCUTS[hotkey][1]:
+			SHORTCUTS[hotkey][0](SHORTCUTS[hotkey][1])
 	else:
-			SHORTCUTS[k][0]()
+			SHORTCUTS[hotkey][0]()
+
+def onRelease(_key):
+	if _key in PRESSED_KEYS:  PRESSED_KEYS.remove(_key)
 
 
 
+def listener():	
+	global LISTENER
+	LISTENER=pyk.Listener(on_press=onPress,on_release=onRelease)
+
+	LISTENER.start()
+	LISTENER.join()
 
 
-
-
-def listener():
-	with keyboard.Listener(on_press=press) as listener:
-			listener.join()
-
-
-th1 = threading.Thread(target=listener, name="LISTENER").start()
+if __name__=="__main__":
+	th1 = threading.Thread(target=listener, name="LISTENER").start()	
