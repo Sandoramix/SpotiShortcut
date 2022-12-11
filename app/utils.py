@@ -1,8 +1,13 @@
 import os,yaml
+import pynput.keyboard as pyk
+import pynput
+import re
 
 API="https://api.spotify.com/v1/"
 SCOPES="user-follow-read user-top-read user-read-recently-played user-read-playback-position user-library-read user-library-modify user-read-currently-playing user-modify-playback-state user-read-playback-state user-read-email playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private"
 
+
+# CONFIG.YAML UTILS
 ADD_TO_PLAYLIST="addToPlaylist"
 REM_FR_PLAYLIST="removeFromPlaylist"
 ADD_TO_LIKED="addToLiked"
@@ -13,18 +18,17 @@ TGL_SHUFFLE="toggleShuffle"
 PAUSE="pause"
 CLOSE="close"
 
-
-
-
 CONFIG_TEMPLATE=f"""
 # TEMPLATE
 {ADD_TO_PLAYLIST}:
   key: playlist_id
-  key2: playlist2_id
+  
+  # if you want a hotkey with multiple keys, use this syntax
+  <key>+<key>: playlist_id
 
 {REM_FR_PLAYLIST}:
   key: playlist_id
-  key2: playlist2_id
+  key: playlist_id
 
 {ADD_TO_LIKED}: key
 {REM_FR_LIKED}: key
@@ -48,5 +52,36 @@ def createConfig(path):
 		file.write(CONFIG_TEMPLATE)
 
 
+
+
+
+
+# PYNPUT UTILS
+def getHotkeys(string:str)->list[str]:
+	regex=re.compile(r'"<(.*?)>"g')
+	if '>+<' not in string: return [string]
+	return regex.findall(string)
+
+def sortedHotkeys(hotkeys:str):
+	new_hotkeys=getHotkeys(hotkeys)
+	new_hotkeys.sort()
+	return new_hotkeys
+
+
+def isSpecialKey(key):
+	return hasattr(key,'_name_')
+
+def formatKey(key,canonical_key):
+	return key._name_ if isSpecialKey(key) else pynputKeyValue(canonical_key)
+
+
+
+def pynputKeyValue(key:pyk.Key | pyk.KeyCode):
+	if key==None: return None
+	result=key._name_ if isSpecialKey(key) else key.char if hasattr(key,'char') else key.name if hasattr(key,'name') else key
+	if result ==None: return None
+	return str(result)
+
+# OTHER
 def line(ch="─", length=50) -> str:
 		return ch*length
