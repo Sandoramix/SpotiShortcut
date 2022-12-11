@@ -14,8 +14,10 @@
 
 - In app Settings set "Redirect url" to <http://127.0.0.1:9005>
 - Configure .env_example and save it as .env
-- configure config_example.yaml and save it as config.yaml
 - Run init.bat
+- configure config_example.yaml and save it as config.yaml
+    * _If you need help with key names, run hotkey_helper.bat
+- Run generated start.bat
 
 ---
 
