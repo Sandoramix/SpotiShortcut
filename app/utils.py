@@ -57,8 +57,8 @@ def createConfig(path):
 
 # PYNPUT UTILS
 
-def forgeHotkey(keys:(str|list[str])):
-	keys_list=keys if type(keys) is list else [keys]
+def forgeHotkey(keys:(str|list[str]))->str:
+	keys_list:list[str]=keys if type(keys) is list else [keys]
 	
 	if len(keys_list)==1:
 		return keys_list[0]
@@ -76,7 +76,7 @@ def getHotkey(string:str)->list[str]:
 def sortedHotkey(hotkey:str):
 	new_hotkey=getHotkey(hotkey)
 	new_hotkey.sort()
-	return new_hotkey
+	return forgeHotkey(new_hotkey)
 
 
 def isSpecialKey(key):
