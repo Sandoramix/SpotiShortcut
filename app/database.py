@@ -1,6 +1,6 @@
 import os,sqlite3
 from app.utils import line
-
+import time
 
 class SpotifyDB():
     def __init__(self, spotify_session) -> None:
@@ -35,104 +35,79 @@ class SpotifyDB():
 
     def updateDB(self) -> None:
         print(f'UPDATING DATABASE - please wait...')
-        us_playlists = []
+        userPlaylists = []
         raw = self.session.current_user_playlists()
 
         for playlist in raw["items"]:
             if playlist["owner"]["id"] == self.username:
-
+                
                 self.updatePlaylist(playlist["id"])
-                us_playlists.append(playlist["id"])
+                userPlaylists.append(playlist["id"])
+                
 
-        self.delete_old_playlists(us_playlists)
+        self.delete_old_playlists(userPlaylists)
         print(f'\nDATABASE UPDATED\n{line()}')
 
 # -------------------------------------GetData----------------------------------------------
     def song(self, id) -> (tuple or None):
-        if not self.has_song(id):
-            return None
-        return self.exec("select * from song where song_id='"+id+"'", fetch=1)
+        self.exec("select * from song where song_id='"+id+"'", fetch=1)
 
     def playlist_ids(self):
         return [i[0] for i in self.exec("select playlist_id from playlist", fetch=0)]
 
     def playlist_songs_ids(self, id_playlist):
-        if not self.playlist_exists(id_playlist):
-            return []
-        return [i[1] for i in self.exec("select * from playlist_songs where playlist='"+id_playlist+"'", fetch=0)]
+        return [i[1] for i in self.exec("select * from playlist_songs where playlist='"+id_playlist+"'", fetch=0) if i!=None and len(i)>0]
 
 
 # -------------------------------------AddData-------------------------------------------------
 
 
-    def add_song(self, song) -> None:
+    def saveTrack(self, song) -> None:
         if type(song) is tuple:
             song = [song]
-        for s in song:
-            if not self.has_song(s[0]):
-                self.exec(
-                    "insert into song (song_id,name,artists,duration_ms) values(?,?,?,?)", [s])
+        self.exec("insert or ignore into song (song_id,name,artists,duration_ms) values(?,?,?,?)", song)
 
     def add_playlist(self, id, name, owner) -> None:
-        if not self.playlist_exists(id):
-            self.exec("insert into playlist(playlist_id,name,owner) values(?, ?, ?)", [
-                      (id, name, owner)])
+        self.exec("insert or ignore into playlist(playlist_id,name,owner) values(?, ?, ?)", [(id, name, owner)])
 
     def playlist_add_song(self, playlist, song) -> None:
         if type(song) is tuple:
             song = [song]
-        self.add_song(song)
-        for s in song:
-            if not self.playlist_has_song(playlist, s[0]):
-                self.exec("insert into playlist_songs (playlist,song) values(?,?)", [
-                          (playlist, s[0])])
+        self.saveTrack(song)
+        
+        self.exec("insert or ignore into playlist_songs (playlist,song) values(?,?)", [ (playlist, s[0]) for s in song])
 
     def playlist_delete_song(self, playlist, song) -> None:
-        if self.playlist_has_song(playlist, song):
-            self.exec("delete from playlist_songs where playlist='" +
-                      playlist+"' and song='"+song+"'")
+        self.exec(f'delete from playlist_songs where playlist="{playlist}" and song="{song}"')
+
+    def addPlaylist(self,id:str,name:str, owner:str,tracks:list[any]=[]):
+        self.exec('insert or ignore into playlist(playlist_id,name,owner) values(?,?,?)',[(id,name,owner)])
+        allSongsIds:list[str]=[song[0] for song in tracks]
+        
+        self.exec(f'delete from playlist_songs where playlist="{id}" and song not in ("'+'","'.join(allSongsIds)+'")')
+        
+        if len(allSongsIds) ==0:
+            return
+
+        self.exec("insert or ignore into playlist_songs(playlist,song) values(?, ?)", [(id,song_id) for song_id in allSongsIds])
+        self.saveTrack(tracks)
+
 # -------------------------------------UpdateData----------------------------------------------
 
-    def updatePlaylist(self, id) -> None:
-        playlist = self.playlist_json(id)
+    def updatePlaylist(self, playlist_id:str) -> None:
+        playlist = self.playlist_json(playlist_id)
 
-        self.add_playlist(id, playlist["name"], playlist["owner"])
-
-        tracks = playlist["tracks"]
-
-        new_songs = []
-        new_playlist_songs = []
-        all_ids = []
-
-        for song in tracks:
-            song_id = song[0]
-            all_ids.append(song_id)
-
-            if not self.database_has(table="playlist_songs", param1="song", value1=song_id, param2="playlist", value2=id):
-                new_playlist_songs.append((id, song_id))
-
-            if not self.has_song(song_id):
-                new_songs.append(song)
-
-        for dbsong in self.playlist_songs_ids(id):
-            if dbsong not in all_ids:
-                self.playlist_delete_song(id, dbsong)
-
-        self.exec(
-            "insert into playlist_songs(playlist,song) values(?, ?)", new_playlist_songs)
-        self.add_song(new_songs)
+        self.addPlaylist(playlist_id, playlist["name"], playlist["owner"],playlist["tracks"])
 
 # ------------------------------------------------------------------------------------
     def clear_all_playlist_songs(self, id) -> None:
         self.exec("delete from playlist_songs where playlist='"+id+"'")
 
-    def delete_old_playlists(self, playlists) -> None:
-        db_playlists = self.playlist_ids()
-
-        for pl in db_playlists:
-            if pl not in playlists:
-                self.clear_all_playlist_songs(pl)
-                self.exec("delete from playlist where playlist_id='"+pl+"'")
+    def delete_old_playlists(self, existingPlaylists:list[str]) -> None:
+        query='delete from playlist where playlist_id not in ("'+'","'.join(existingPlaylists)+'")'
+        self.exec(query)
+        
+        
 # -------------------------------------Utils--------------------------------------------------
 
     def playlist_json(self, id) -> dict:
@@ -142,7 +117,7 @@ class SpotifyDB():
             "name": playlist["name"],
             "owner": playlist["owner"]["id"],
             "total": int(playlist["tracks"]["total"]),
-            "tracks": []
+            "tracks": [] 
         }
         offs = 100
         tracks = playlist["tracks"]["items"]
@@ -158,7 +133,7 @@ class SpotifyDB():
 
     def json_extract_song_info(self, object) -> tuple:
         """Extract from api request only useful for this program information\n
-        object= [spotify 'track' object]
+        
         """
         s_id = object["id"]
         s_name = object["name"]
@@ -167,36 +142,28 @@ class SpotifyDB():
         return (s_id, s_name, s_artists, s_duration)
 
     def playlist_has_song(self, playlist_id, song_id) -> bool:
-        if not self.database_has(table="playlist_songs", param1="playlist", value1=playlist_id, param2="song", value2=song_id):
-            return False
-        return True
+        return self.database_has(table="playlist_songs", param1="playlist", value1=playlist_id, param2="song", value2=song_id)
 
     def playlist_exists(self, id) -> bool:
-        if not self.database_has(table="playlist", param1="playlist_id", value1=id):
-            return False
-        return True
+        return self.database_has(table="playlist", param1="playlist_id", value1=id)
 
     def has_song(self, id) -> bool:
-        if not self.database_has(table="song", param1="song_id", value1=id):
-            return False
-        return True
+        return self.database_has(table="song", param1="song_id", value1=id)
 
     def database_has(self, table, param1, value1, param2=None, value2=None) -> bool:
-        if not param2 or not value2:
-            if not self.exec("select * from "+table+" where "+param1+"='"+value1+"'", fetch=1):
-                return False
-        else:
-            if not self.exec("select * from "+table+" where "+param1+"='"+value1+"' and "+param2+"='"+value2+"'", fetch=1):
-                return False
+        query=f'select * from {table} where {param1}="{value1}"' +f' and {param2}="{value2}"' if param2!=None and value2!=None else ""
+        if not self.exec(query, fetch=1):
+            return False
+        
         return True
 
-    def exec(self, command, params=None, fetch=None) -> None or tuple or list:
+    def exec(self, command:str, params=None, fetch=None) -> None or tuple or list:
         if params == None:
             data = self.db.execute(command)
         else:
             data = self.db.executemany(command, params)
 
-        if "select" not in command:
+        if not command.lower().strip().startswith("select"):
             self.commit()
         if fetch == None:
             return data
