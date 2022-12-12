@@ -49,13 +49,15 @@ def populateShortcuts(name,command,multiple=False):
 	if not multiple and (type(hotkeys) is not str): return None
 
 	if not multiple:
-		SHORTCUTS[forgeHotkey(sortedHotkey(hotkeys.lower()))]=[command,None]
+		SHORTCUTS[sortedHotkey(hotkeys.lower())]=[command,None]
 		return
 	
 
 	for hotkey,value in hotkeys.items():
-		if not value or type(value) is not str: continue
-		SHORTCUTS[forgeHotkey(sortedHotkey(hotkey.lower()))]=[command,value]
+		if not value or type(value) is not str:
+			print(f'INVALID VALUE ON [{hotkey}] HOTKEY')
+			continue
+		SHORTCUTS[sortedHotkey(hotkey.lower())]=[command,value]
 	
 
 def updateShortcuts():
@@ -102,7 +104,7 @@ def onRelease(_key):
 	if _key in PRESSED_KEYS: PRESSED_KEYS.remove(_key)
 	
 	if len(strKeys)==0: return
-	hotkey=forgeHotkey(strKeys)
+	hotkey=sortedHotkey(forgeHotkey(strKeys))
 
 	if hotkey == CONFIG[PAUSE]:
 			PAUSED_STATUS = not PAUSED_STATUS
