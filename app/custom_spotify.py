@@ -102,7 +102,7 @@ class CustomSpotify():
 
                 elif not removing and not songExistInPlaylist:
                     self.session.playlist_add_items(playlist, songs)
-                    self.db.playlist_add_song(playlist, song)
+                    self.db.addSongsToPlaylist(playlist, song)
                     result = True
             except KeyboardInterrupt:
                 self.exit()
