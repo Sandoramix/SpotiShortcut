@@ -18,7 +18,6 @@ def updateConfig():
 def close():
 	print(f"BYE!\n{line()}")
 	SPOTIFY.exit()
-	if LISTENER: LISTENER.stop()
 	sleep(2)
 	exit(0)
 # ----------------------------
@@ -80,7 +79,6 @@ def updateShortcuts():
 	
 	print(f"SHORTCUTS UPDATED\n{line()}")
 
-	
 updateShortcuts()
 
 
@@ -89,17 +87,20 @@ def onPress(_key):
 	global PAUSED_STATUS
 	if not SHORTCUTS:
 		updateShortcuts()
+	if _key not in PRESSED_KEYS: PRESSED_KEYS.add(_key)
 
-	PRESSED_KEYS.add(_key)
-
-
-
+def onRelease(_key):
+	global PRESSED_KEYS
+	global PAUSED_STATUS
+	
 	strKeys:list[str]=[ 
 		formatKey(hkey,LISTENER.canonical(hkey)) 
 		for hkey in list(PRESSED_KEYS) 
 		if formatKey(hkey,LISTENER.canonical(hkey))!=None 
 	]
-
+	
+	if _key in PRESSED_KEYS: PRESSED_KEYS.remove(_key)
+	
 	if len(strKeys)==0: return
 	hotkey=forgeHotkey(strKeys)
 
@@ -125,18 +126,15 @@ def onPress(_key):
 			SHORTCUTS[hotkey][0](SHORTCUTS[hotkey][1])
 	else:
 			SHORTCUTS[hotkey][0]()
-
-def onRelease(_key):
-	if _key in PRESSED_KEYS:  PRESSED_KEYS.remove(_key)
+	
 
 
 
 def listener():	
 	global LISTENER
-	LISTENER=pyk.Listener(on_press=onPress,on_release=onRelease)
-
-	LISTENER.start()
-	LISTENER.join()
+	with pyk.Listener(on_press=onPress,on_release=onRelease) as l:
+		LISTENER=l
+		l.join()
 
 
 if __name__=="__main__":
