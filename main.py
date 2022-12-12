@@ -106,7 +106,7 @@ def onRelease(_key):
 	if len(strKeys)==0: return
 	hotkey=sortedHotkey(forgeHotkey(strKeys))
 
-	if hotkey == CONFIG[PAUSE]:
+	if  PAUSE in CONFIG and hotkey == CONFIG[PAUSE]:
 			PAUSED_STATUS = not PAUSED_STATUS
 			if not PAUSED_STATUS:
 					print(f"RESUMED\n{line()}")
@@ -115,8 +115,9 @@ def onRelease(_key):
 			return
 
 	if PAUSED_STATUS and hotkey in SHORTCUTS.keys():
+		if PAUSE in CONFIG:
 			print(f"PAUSED -> press [{CONFIG[PAUSE]}] to resume\n{line()}")
-			return
+		return
 
 	if PAUSED_STATUS:
 			return
