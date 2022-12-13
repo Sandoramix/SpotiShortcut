@@ -1,3 +1,4 @@
+import datetime
 import os,yaml
 import pynput.keyboard as pyk
 import re
@@ -82,6 +83,8 @@ def sortedHotkey(hotkey:str):
 def isSpecialKey(key):
 	return hasattr(key,'_name_')
 
+
+
 def formatKey(key,canonical_key):
 	return key._name_ if isSpecialKey(key) else pynputKeyValue(canonical_key)
 
@@ -96,3 +99,6 @@ def pynputKeyValue(key:pyk.Key | pyk.KeyCode):
 # OTHER
 def line(ch="─", length=50) -> str:
 		return ch*length
+
+def currentTime():
+	return str(datetime.datetime.now()).replace(" "," │ ")
