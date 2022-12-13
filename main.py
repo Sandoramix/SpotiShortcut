@@ -1,8 +1,7 @@
 
 from pynput import keyboard as pyk
 
-import threading
-from time import sleep
+import time
 from app.custom_spotify import CustomSpotify
 from app.utils import *
 
@@ -18,22 +17,12 @@ def updateConfig():
 def close():
 	print(f"BYE!\n{line()}")
 	SPOTIFY.exit()
-	sleep(2)
+	time.sleep(2)
 	exit(0)
 # ----------------------------
 
 
-CONFIG={}
-updateConfig()
 
-SPOTIFY = CustomSpotify()
-
-SHORTCUTS = {}
-
-PAUSED_STATUS = False
-
-LISTENER:pyk.Listener=None
-PRESSED_KEYS : set[(pyk.Key | pyk.KeyCode)]=set()
 
 
 
@@ -81,7 +70,6 @@ def updateShortcuts():
 	
 	print(f"SHORTCUTS UPDATED\n{line()}")
 
-updateShortcuts()
 
 
 
@@ -89,7 +77,9 @@ def onPress(_key):
 	global PAUSED_STATUS
 	if not SHORTCUTS:
 		updateShortcuts()
-	if _key not in PRESSED_KEYS: PRESSED_KEYS.add(_key)
+
+	canonicalKey=_key if isSpecialKey(_key) else LISTENER.canonical(_key)
+	if canonicalKey not in PRESSED_KEYS: PRESSED_KEYS.add(canonicalKey)
 
 def onRelease(_key):
 	global PRESSED_KEYS
@@ -100,12 +90,12 @@ def onRelease(_key):
 		for hkey in list(PRESSED_KEYS) 
 		if formatKey(hkey,LISTENER.canonical(hkey))!=None 
 	]
-	
-	if _key in PRESSED_KEYS: PRESSED_KEYS.remove(_key)
+	canonicalKey=_key if isSpecialKey(_key) else LISTENER.canonical(_key)
+	if canonicalKey in PRESSED_KEYS: PRESSED_KEYS.remove(canonicalKey)
 	
 	if len(strKeys)==0: return
 	hotkey=sortedHotkey(forgeHotkey(strKeys))
-
+	
 	if  PAUSE in CONFIG and hotkey == CONFIG[PAUSE]:
 			PAUSED_STATUS = not PAUSED_STATUS
 			if not PAUSED_STATUS:
@@ -133,12 +123,17 @@ def onRelease(_key):
 
 
 
-def listener():	
-	global LISTENER
-	with pyk.Listener(on_press=onPress,on_release=onRelease) as l:
-		LISTENER=l
-		l.join()
-
-
 if __name__=="__main__":
-	th1 = threading.Thread(target=listener, name="LISTENER").start()	
+	CONFIG={}
+	updateConfig()
+
+	SPOTIFY = CustomSpotify()
+
+	SHORTCUTS = {}
+
+	updateShortcuts()
+	PAUSED_STATUS = False
+
+	PRESSED_KEYS : set[(pyk.Key | pyk.KeyCode)]=set()
+	with pyk.Listener(on_press=onPress,on_release=onRelease) as LISTENER:
+		LISTENER.join()
