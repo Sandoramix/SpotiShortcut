@@ -1,8 +1,7 @@
 
 import os
-import datetime
 import threading
-from app.utils import line,SCOPES
+from app.utils import currentTime, line, SCOPES
 from dotenv import load_dotenv
 
 from spotipy import Spotify
@@ -191,11 +190,11 @@ class CustomSpotify():
 
         if flag:
             print(
-                f'{line()}\nSPOTIFY UPDATER │ {str(datetime.datetime.now()).replace(" "," │ ")}\n{line()}')
+                f'{line()}\nSPOTIFY UPDATER │ {currentTime()}\n{line()}')
             return
 
         print(
-            f'TOKEN UPDATED │ {str(datetime.datetime.now()).replace(" "," │ ")}\n{line()}')
+            f'TOKEN UPDATED │ {currentTime()}\n{line()}')
 
         self.oauth.refresh_access_token(self.RTOKEN)
         self.TOKEN = self.oauth.get_access_token(as_dict=False)
