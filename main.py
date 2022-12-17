@@ -35,10 +35,10 @@ def populateShortcuts(name,command,multiple=False):
 
 	if not hotkeys: return None
 	if multiple and (type(hotkeys) is not dict): return None
-	if not multiple and (type(hotkeys) is not str): return None
+	if not multiple and (type(hotkeys) is not str and type(hotkeys) is not int): return None
 
 	if not multiple:
-		SHORTCUTS[sortedHotkey(hotkeys.lower())]=[command,None]
+		SHORTCUTS[sortedHotkey(str(hotkeys).lower())]=[command,None]
 		return
 	
 
@@ -46,7 +46,7 @@ def populateShortcuts(name,command,multiple=False):
 		if not value or type(value) is not str:
 			print(f'INVALID VALUE ON [{hotkey}] HOTKEY')
 			continue
-		SHORTCUTS[sortedHotkey(hotkey.lower())]=[command,value]
+		SHORTCUTS[sortedHotkey(str(hotkey).lower())]=[command,value]
 	
 
 def updateShortcuts():
@@ -54,11 +54,14 @@ def updateShortcuts():
 	updateConfig()
 	SHORTCUTS={}
 
+	populateShortcuts(ADD_TO_LIKED,SPOTIFY.add_current_to_liked)
+	
+	populateShortcuts(REM_FR_LIKED,SPOTIFY.remove_current_from_liked)
+
 	populateShortcuts(ADD_TO_PLAYLIST,SPOTIFY.add_current_to_playlist,True)
 	populateShortcuts(REM_FR_PLAYLIST,SPOTIFY.remove_current_from_playlist,True)
 	
-	populateShortcuts(ADD_TO_LIKED,SPOTIFY.add_current_to_liked)
-	populateShortcuts(REM_FR_LIKED,SPOTIFY.remove_current_from_liked)
+	
 	
 	populateShortcuts(TGL_LOOP,SPOTIFY.loop_toggle)
 	populateShortcuts(TGL_SHUFFLE,SPOTIFY.shuffle_toggle)
