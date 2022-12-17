@@ -7,7 +7,7 @@ class SpotifyDB():
         """Initialize database
         spotify_session= spotipy.Spotify() object
         """
-        start=time.time()
+        # start=time.time()
         self.db_path=os.path.abspath('./spotify.db') 
 
         self.initialize()
@@ -17,7 +17,7 @@ class SpotifyDB():
 
         # TODO IMPROVE DB UPDATING
         self.updateDB()
-        end=time.time()
+        # end=time.time()
         # print(f'res=> {(end-start)*10**3:.03f}')
 
     def initialize(self) -> None:
