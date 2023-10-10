@@ -8,3 +8,5 @@ python-env
 .cache
 start.bat
 spotify.db
+pyenv
+start.sh

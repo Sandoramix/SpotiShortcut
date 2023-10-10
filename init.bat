@@ -1,2 +1,11 @@
-py -m venv python-env
-python-env\Scripts\activate & pip install -r "requirements.txt" & echo cls ^& python-env\Scripts\activate ^& python main.py > start.bat
+:;#!/usr/share/env python3_12
+:; python3_12 -m venv pyenv
+:; echo cls && echo "python main.py" > start.sh
+:; chmod +x start.sh
+:; source pyenv/bin/activate
+:; pip install -r requirements.txt
+:; ./start.sh
+:;exit $?
+@echo off
+python -m venv pyenv
+pyenv\Scripts\activate & pip install -r "requirements.txt" & echo cls ^& pyenv\Scripts\activate ^& python main.py > start.bat
