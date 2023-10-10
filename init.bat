@@ -1,5 +1,5 @@
-:;#!/usr/share/env python3_12
-:; python3_12 -m venv pyenv
+:;#!/usr/share/env python3
+:; python3 -m venv pyenv
 :; echo cls && echo "python main.py" > start.sh
 :; chmod +x start.sh
 :; source pyenv/bin/activate
