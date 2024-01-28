@@ -8,7 +8,7 @@ class SpotifyDB():
         spotify_session= spotipy.Spotify() object
         """
         # start=time.time()
-        self.db_path=os.path.abspath('./spotify.db') 
+        self.db_path=os.path.abspath('./spotify.db')
 
         self.initialize()
 
@@ -44,10 +44,10 @@ class SpotifyDB():
 
         for playlist in raw["items"]:
             if playlist["owner"]["id"] == self.username:
-                
+
                 self.updatePlaylist(playlist["id"])
                 userPlaylists.append(playlist["id"])
-                
+
 
         self.delete_old_playlists(userPlaylists)
         print(f'\nDATABASE UPDATED\n{line()}')
@@ -71,26 +71,26 @@ class SpotifyDB():
             song = [song]
 
         self.exec('insert or ignore into song (song_id,name,artists,duration_ms) values '+','.join([
-            f'("{self.strEscape(str(s[0]))}","{self.strEscape(str(s[1]))}","{self.strEscape(str(s[2]))}","{self.strEscape(str(s[3]))}")' 
+            f'("{self.strEscape(str(s[0]))}","{self.strEscape(str(s[1]))}","{self.strEscape(str(s[2]))}","{self.strEscape(str(s[3]))}")'
             for s in song
         ]))
 
-    def addSongsToPlaylist(self, playlist_id, tracks:(str|tuple[str])) -> None:
+    def addSongsToPlaylist(self, playlist_id, tracks:("str|tuple[str]")) -> None:
         if type(tracks) is tuple:
             tracks = [tracks]
-        self.exec("insert or ignore into playlist_songs(playlist,song) values "+','.join([ 
-            f'("{self.strEscape(playlist_id)}","{self.strEscape(str(id if type(id) is str else id[0]))}")' for id in tracks 
+        self.exec("insert or ignore into playlist_songs(playlist,song) values "+','.join([
+            f'("{self.strEscape(playlist_id)}","{self.strEscape(str(id if type(id) is str else id[0]))}")' for id in tracks
         ]))
 
     def playlist_delete_song(self, playlist, song) -> None:
         self.exec(f'delete from playlist_songs where playlist="{playlist}" and song="{song}"')
 
-    def addPlaylist(self,playlist_id:str,name:str, owner:str,tracks:list[any]=[]):
+    def addPlaylist(self,playlist_id:str,name:str, owner:str,tracks:"list[any]"=[]):
         self.exec('insert or ignore into playlist(playlist_id,name,owner) values(?,?,?)',[(playlist_id,name,owner)])
         allSongsIds:list[str]=[song[0] for song in tracks]
-        
+
         localPlaylistSongsIds:list[str]=[s[0] for s in self.exec(f'select song from playlist_songs where playlist="{self.strEscape(playlist_id)}"',fetch=0) if s!=None]
-        
+
 
         diffTracks=[track for track in allSongsIds if track[0] not in localPlaylistSongsIds]
         if len(diffTracks) ==0:
@@ -99,8 +99,8 @@ class SpotifyDB():
         diffIds=[s[0] for s in diffTracks]
 
         self.exec(f'delete from playlist_songs where playlist="{playlist_id}" and song not in ("'+'","'.join(allSongsIds)+'")')
-        
-        
+
+
         self.addSongsToPlaylist(playlist_id,diffIds)
         self.saveTrack(diffTracks)
 
@@ -115,15 +115,15 @@ class SpotifyDB():
     def clear_all_playlist_songs(self, id) -> None:
         self.exec("delete from playlist_songs where playlist='"+id+"'")
 
-    def delete_old_playlists(self, existingPlaylists:list[str]) -> None:
+    def delete_old_playlists(self, existingPlaylists:"list[str]") -> None:
         query='delete from playlist where playlist_id not in ("'+'","'.join(existingPlaylists)+'")'
         self.exec(query)
-        
-        
+
+
 # -------------------------------------Utils--------------------------------------------------
     def strEscape(self,string:str):
         return string.replace('"','""').replace("'","''")
-    
+
     def playlist_json(self, id) -> dict:
         playlist = self.session.playlist(id)
 
@@ -131,7 +131,7 @@ class SpotifyDB():
             "name": playlist["name"],
             "owner": playlist["owner"]["id"],
             "total": int(playlist["tracks"]["total"]),
-            "tracks": [] 
+            "tracks": []
         }
         offs = 100
         tracks = playlist["tracks"]["items"]
@@ -147,7 +147,7 @@ class SpotifyDB():
 
     def json_extract_song_info(self, object) -> tuple:
         """Extract from api request only useful for this program information\n
-        
+
         """
         s_id = object["id"]
         s_name = object["name"]
@@ -168,7 +168,7 @@ class SpotifyDB():
         query=f'select * from {table} where {param1}="{value1}"' +f' and {param2}="{value2}"' if param2!=None and value2!=None else ""
         if not self.exec(query, fetch=1):
             return False
-        
+
         return True
 
     def exec(self, command:str, params=None, fetch=None) -> None or tuple or list:

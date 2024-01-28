@@ -22,7 +22,7 @@ CONFIG_TEMPLATE=f"""
 # TEMPLATE
 {ADD_TO_PLAYLIST}:
   key: playlist_id
-  
+
   # if you want a hotkey with multiple keys, use this syntax
   <key>+<key>: playlist_id
 
@@ -58,19 +58,19 @@ def createConfig(path):
 
 # PYNPUT UTILS
 
-def forgeHotkey(keys:(str|list[str]))->str:
+def forgeHotkey(keys:("str|list[str]"))->str:
 	keys_list:list[str]=keys if type(keys) is list else [keys]
-	
+
 	if len(keys_list)==1:
 		return keys_list[0]
 	return '<'+'>+<'.join(keys_list)+'>'
 
-def getHotkey(string:str)->list[str]:
+def getHotkey(string:str)->"list[str]":
 	trimmed=string.replace(' ','')
 	regex=re.compile(r'<(.*?)>\+?')
-	
+
 	if '>+<' not in trimmed: return [trimmed]
-	
+
 	return regex.findall(trimmed)
 
 
@@ -90,7 +90,7 @@ def formatKey(key,canonical_key):
 
 
 
-def pynputKeyValue(key:pyk.Key | pyk.KeyCode):
+def pynputKeyValue(key:"pyk.Key | pyk.KeyCode"):
 	if key==None: return None
 	result=key._name_ if isSpecialKey(key) else key.char if hasattr(key,'char') else key.name if hasattr(key,'name') else key
 	if result ==None: return None
