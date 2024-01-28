@@ -1,10 +1,8 @@
-:;#!/usr/share/env python3
 :; python3 -m venv pyenv
-:; echo cls && echo "python main.py" > start.sh
+:; echo "clear && cd $(pwd) && ./pyenv/bin/python3 main.py" > start.sh
 :; chmod +x start.sh
-:; source pyenv/bin/activate
-:; pip install -r requirements.txt
-:; ./start.sh
+:; ./pyenv/bin/pip3 install -r requirements.txt
+:; #./start.sh
 :;exit $?
 @echo off
 python -m venv pyenv
