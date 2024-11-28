@@ -2,6 +2,7 @@
 from venv import logger
 from pynput import keyboard as pyk
 from pynput.keyboard import Key
+import signal
 
 import time
 from app.custom_spotify import CustomSpotify
@@ -20,9 +21,8 @@ def updateConfig():
 
 def close():
 	print(f"BYE!\n{line()}")
-	SPOTIFY.exit()
 	time.sleep(2)
-	exit(0)
+	os.kill(os.getpid(), signal.SIGINT)
 # ----------------------------
 
 
@@ -41,16 +41,24 @@ def populateShortcuts(name,command,multiple=False):
 	if multiple and (type(hotkeys) is not dict): return None
 	if not multiple and (type(hotkeys) is not str and type(hotkeys) is not int): return None
 
+	parsedKey = sortedHotkey(str(hotkeys).lower())
+
+
 	if not multiple:
-		SHORTCUTS[sortedHotkey(str(hotkeys).lower())]=[command,None]
+		if parsedKey not in SHORTCUTS:
+			SHORTCUTS[parsedKey] = []
+		SHORTCUTS[parsedKey].append([command,None])
 		return
 
 
 	for hotkey,value in hotkeys.items():
+		parsedHotkey = sortedHotkey(str(hotkey).lower())
+		if parsedHotkey not in SHORTCUTS:
+			SHORTCUTS[parsedHotkey] = []
 		if not value or type(value) is not str:
-			print(f'INVALID VALUE ON [{hotkey}] HOTKEY')
+			print(f'INVALID VALUE ON [{parsedHotkey}] HOTKEY')
 			continue
-		SHORTCUTS[sortedHotkey(str(hotkey).lower())]=[command,value]
+		SHORTCUTS[parsedHotkey].append([command,value])
 
 
 def updateShortcuts():
@@ -76,6 +84,7 @@ def updateShortcuts():
 	populateShortcuts(UPD_SHORTCUTS,updateShortcuts)
 
 	print(f"SHORTCUTS UPDATED\n{line()}")
+	print(f'{SHORTCUTS["f9"]=}')
 
 
 
@@ -133,11 +142,12 @@ def onRelease(_key):
 
 		if hotkey not in SHORTCUTS:
 				return
-
-		if SHORTCUTS[hotkey][1]:
-				SHORTCUTS[hotkey][0](SHORTCUTS[hotkey][1])
-		else:
-				SHORTCUTS[hotkey][0]()
+		actions = SHORTCUTS[hotkey]
+		for action in actions:
+			if action[1]:
+				action[0](action[1])
+			else:
+				action[0]()
 	except:
 		pass
 

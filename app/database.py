@@ -43,7 +43,7 @@ class SpotifyDB():
         raw = self.session.current_user_playlists()
 
         for playlist in raw["items"]:
-            if playlist["owner"]["id"] == self.username:
+            if playlist != None and playlist.get("owner", {}).get("id", None) == self.username:
 
                 self.updatePlaylist(playlist["id"])
                 userPlaylists.append(playlist["id"])

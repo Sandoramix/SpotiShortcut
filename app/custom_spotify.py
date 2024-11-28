@@ -111,7 +111,7 @@ class CustomSpotify():
                 continue
             except Exception as e:
                 print(e)
-            print(f"[{'TRUE' if result else 'FALSE'}] SONG {'REMOVED FROM' if removing else 'ADDED TO'} PLAYLIST {'['+PLAYLIST['name']+']' if 'name' in PLAYLIST else None}\n=> {self.song_name(song)}\n{line()}")
+            print(f"[{'TRUE' if result else 'FALSE'}] SONG {'REMOVED FROM' if removing else 'ADDED TO'} PLAYLIST {'['+PLAYLIST['name']+']' if 'name' in PLAYLIST else None}\n=> {self.song_name(song)}\n{line()}\a")
 # ---------------------------------------------------------------------------------------------
 
 
