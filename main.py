@@ -84,7 +84,6 @@ def updateShortcuts():
 	populateShortcuts(UPD_SHORTCUTS,updateShortcuts)
 
 	print(f"SHORTCUTS UPDATED\n{line()}")
-	print(f'{SHORTCUTS["f9"]=}')
 
 
 
