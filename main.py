@@ -21,8 +21,7 @@ def updateConfig():
 
 def close():
 	print(f"BYE!\n{line()}")
-	time.sleep(2)
-	os.kill(os.getpid(), signal.SIGINT)
+	os.kill(os.getpid(), signal.SIGKILL)
 # ----------------------------
 
 
@@ -165,4 +164,7 @@ if __name__=="__main__":
 
 	PRESSED_KEYS : "set[(pyk.Key | pyk.KeyCode)]"=set()
 	with pyk.Listener(on_press=onPress,on_release=onRelease) as LISTENER:
-		LISTENER.join()
+		try:
+			LISTENER.join()
+		except KeyboardInterrupt:
+			close()
